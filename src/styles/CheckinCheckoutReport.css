@@ -1,0 +1,200 @@
+.checkin-checkout-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
+}
+
+.checkin-checkout-content {
+  flex: 1;
+  margin-left: 210px;
+  width: calc(100vw - 210px);
+  min-height: 100vh;
+  overflow-x: auto;
+  background-color: #f8f9fa;
+}
+
+/* Header */
+.checkin-checkout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 24px;
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Tabs */
+.tab-bar {
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  padding-left: 24px;
+}
+
+.tab-link {
+  background: none;
+  border: none;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  position: relative;
+}
+
+.tab-link:hover {
+  color: #1976d2;
+}
+
+.tab-link.active {
+  color: #1976d2;
+  font-weight: 600;
+}
+
+.tab-link.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 2px;
+  background: #1976d2;
+}
+
+/* ✅ Two-line Filter Section */
+.filters-section {
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 14px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filters-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+
+.filters-row.top-row {
+  justify-content: flex-start;
+}
+
+.filters-row.bottom-row {
+  justify-content: space-between;
+}
+
+/* Date Range */
+.date-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-separator {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* Inputs & Selects */
+.filter-input,
+.filter-input-date,
+.filter-select {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #374151;
+  background: #fff;
+  height: 36px;
+  padding: 8px 10px;
+}
+
+.filter-input {
+  width: 220px;
+}
+
+.filter-input-date {
+  width: 150px;
+}
+
+.filter-select {
+  width: 180px;
+}
+
+/* Export Button */
+.export-btn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 9px 16px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: auto;
+  transition: background 0.2s;
+}
+
+.export-btn:hover {
+  background: #1565c0;
+}
+
+/* Table */
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  background: white;
+  margin-top: 16px;
+}
+
+.checkin-table {
+  width: 97%;
+  border-collapse: collapse;
+  margin: 0 auto;
+  background: white;
+}
+
+.checkin-table th,
+.checkin-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  font-size: 12px;
+  color: #374151;
+}
+
+.checkin-table th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+
+/* Pagination */
+.pagination {
+  text-align: center;
+  padding: 16px;
+  color: #6b7280;
+}
+
+/* Placeholder Uppercase */
+.uppercase-placeholder::placeholder {
+  text-transform: uppercase;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .filters-row {
+    flex-wrap: wrap;
+  }
+
+  .export-btn {
+    width: 100%;
+    margin-left: 0;
+  }
+}
