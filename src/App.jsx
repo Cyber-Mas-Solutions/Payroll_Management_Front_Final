@@ -55,6 +55,11 @@ import ETFEPF from "./pages/ETFEPF";
 import EtfEpfProcess from "./pages/EtfEpfProcess";
 import UnpaidLeaves from "./pages/UnpaidLeaves";
 // import ETFEPFDetails from "./pages/ETFEPFDetails";
+import RolesPage from "./pages/Administration/AdministrationRoles/RolesPage";
+import DepartmentsPage from "./pages/Administration/AdminstrationDepartment/DepartmentsPage";
+import ShiftsPage from "./pages/Administration/AdministrativeShifts/ShiftsPage";
+import HolidaysPage from "./pages/Administration/AdminsitrationHolidays/HolidaysPage";
+import AnnouncementsPage from "./pages/Administration/AdministrativeAnnouncements/AnnouncementsPage";
 
 import Payroll from "./pages/Payroll";
 import ProcessPayroll from "./pages/ProcessPayroll";
@@ -161,6 +166,13 @@ function App() {
         <Route path="/report-analytics/cost-center-analysis" element={<CostCenterAnalysisPage />} />
         <Route path="/report-analytics/compensation-trends" element={<CompensateTrendsPage />} />
         <Route path="/report-analytics/forecasting" element={<ForecastingPage />} />
+
+      {/* Administrative */}
+        <Route path="/administrative" element={<RolesPage />} />
+        <Route path="/administrative/departments" element={<DepartmentsPage />} />
+        <Route path="/administrative/shifts" element={<ShiftsPage />} />
+        <Route path="/administrative/holidays" element={<HolidaysPage />} />
+        <Route path="/administrative/announcements" element={<AnnouncementsPage />} />
 
       {/* Admin helpers*/}
       <Route path="/bulk-actions" element={<BulkActions/>}/>
