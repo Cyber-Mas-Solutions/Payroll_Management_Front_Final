@@ -14,7 +14,6 @@ const EmployeeLeaves = () => {
     { label: "Leave Approval", path: "/leave-approval" },
     { label: "Calendar", path: "/leave-calendar" },
     { label: "Leave Request", path: "/leave-request" },
-    { label: "Leave Rules", path: "/leave-rules" },
   ];
 
   // ---- State --------------------------------------------------------
@@ -49,7 +48,6 @@ const EmployeeLeaves = () => {
         if (ignore) return;
 
         const items = (res && res.data) || [];
-        // backend already gives: employee_id, employee_code, name, department, annualUsed, annualTotal, casualUsed, casualTotal, halfDay1, halfDay2
         setAllEmployees(items);
         setPage(1);
       } catch (err) {
@@ -76,20 +74,20 @@ const EmployeeLeaves = () => {
   }, [allEmployees]);
 
   const filtered = useMemo(() => {
-    const bySearch = (e) =>
-      e.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const term = searchTerm.trim().toLowerCase();
+    const bySearch = (e) => (e.name || "").toLowerCase().includes(term);
     const byDept = (e) =>
       deptFilter === "All Departments" ? true : e.department === deptFilter;
     return allEmployees.filter((e) => bySearch(e) && byDept(e));
   }, [allEmployees, searchTerm, deptFilter]);
 
   const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const current = filtered.slice((page - 1) * pageSize, page * pageSize);
+  const safePage = Math.min(page, pageCount);
+  const current = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
 
   // ---- Actions ------------------------------------------------------
   const onExportCSV = () => {
     const headers = [
-      //"Employee No",
       "Employee Name",
       "Department",
       "Annual Leave Used",
@@ -100,19 +98,18 @@ const EmployeeLeaves = () => {
       "Half Day 2",
     ];
     const csvRows = filtered.map((e) => [
-     // e.employeeCode || "",
-      e.name,
-      e.department,
-      e.annualUsed,
-      e.annualTotal,
-      e.casualUsed,
-      e.casualTotal,
-      e.halfDay1,
-      e.halfDay2,
+      e.name ?? "",
+      e.department ?? "",
+      e.annualUsed ?? 0,
+      e.annualTotal ?? 0,
+      e.casualUsed ?? 0,
+      e.casualTotal ?? 0,
+      e.halfDay1 ?? "",
+      e.halfDay2 ?? "",
     ]);
 
     const csv = [headers, ...csvRows]
-      .map((row) => row.map((cell) => `"${cell}"`).join(","))
+      .map((row) => row.map((cell) => `"${String(cell).replaceAll(`"`, `""`)}"`).join(","))
       .join("\n");
 
     const blob = new Blob([csv], { type: "text/csv" });
@@ -131,10 +128,8 @@ const EmployeeLeaves = () => {
   };
 
   const getLeaveProgress = (used, total) => {
-    if (!total || total <= 0) {
-      return { color: "var(--soft)", width: "0%" };
-    }
-    const percentage = (used / total) * 100;
+    if (!total || total <= 0) return { color: "var(--soft)", width: "0%" };
+    const percentage = Math.min(100, (used / total) * 100);
     if (percentage >= 80) return { color: "var(--danger)", width: `${percentage}%` };
     if (percentage >= 50) return { color: "var(--warn)", width: `${percentage}%` };
     return { color: "var(--success)", width: `${percentage}%` };
@@ -143,47 +138,43 @@ const EmployeeLeaves = () => {
   // ---- Render -------------------------------------------------------
   return (
     <Layout>
-      {/* Fixed Header Section */}
-      <PageHeader
-        breadcrumb={["Leave Management", "Employee Leaves"]}
-        title="Employee Leaves"
-      />
+      <PageHeader breadcrumb={["Leave Management", "Employee Leaves"]} title="Employee Leaves" />
 
-      {/* Tabs */}
+      {/* Tabs (wrap + scroll-safe) */}
       <div
         className="card"
         style={{
           display: "flex",
           gap: "8px",
+          flexWrap: "wrap",
+          alignItems: "center",
           overflowX: "auto",
-          whiteSpace: "nowrap",
         }}
       >
         {tabs.map((tab) => (
           <button
             key={tab.path}
-            className={`btn ${
-              location.pathname === tab.path ? "btn-primary" : "btn-soft"
-            }`}
+            className={`btn ${location.pathname === tab.path ? "btn-primary" : "btn-soft"}`}
             onClick={() => navigate(tab.path)}
-            style={{ whiteSpace: "nowrap", flexShrink: 0 }}
+            style={{ whiteSpace: "nowrap" }}
           >
             {tab.label}
           </button>
         ))}
       </div>
 
-      {/* Filters Card */}
+      {/* Filters Card (responsive grid + non-squishy controls) */}
       <div className="card">
         <div
           style={{
-            display: "flex",
+            display: "grid",
+            gridTemplateColumns: "minmax(220px, 1fr) minmax(220px, 1fr) auto",
             gap: "16px",
             alignItems: "end",
             marginBottom: "12px",
           }}
         >
-          <div style={{ flex: 1 }}>
+          <div style={{ minWidth: 0 }}>
             <label
               style={{
                 fontSize: "12px",
@@ -202,10 +193,11 @@ const EmployeeLeaves = () => {
                 setSearchTerm(e.target.value);
                 setPage(1);
               }}
+              style={{ width: "100%" }}
             />
           </div>
 
-          <div style={{ flex: 1 }}>
+          <div style={{ minWidth: 0 }}>
             <label
               style={{
                 fontSize: "12px",
@@ -223,6 +215,7 @@ const EmployeeLeaves = () => {
                 setDeptFilter(e.target.value);
                 setPage(1);
               }}
+              style={{ width: "100%" }}
             >
               {departments.map((d) => (
                 <option key={d}>{d}</option>
@@ -230,8 +223,8 @@ const EmployeeLeaves = () => {
             </select>
           </div>
 
-          <div>
-            <button className="btn btn-soft" onClick={clearFilters}>
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <button className="btn btn-soft" onClick={clearFilters} style={{ whiteSpace: "nowrap" }}>
               Clear Filters
             </button>
           </div>
@@ -240,18 +233,26 @@ const EmployeeLeaves = () => {
         <div
           style={{
             display: "flex",
+            flexWrap: "wrap",
+            gap: "12px",
             justifyContent: "space-between",
             alignItems: "center",
           }}
         >
           <div style={{ fontSize: "14px", color: "var(--muted)" }}>
-            {loading
-              ? "Loading employees..."
-              : `${filtered.length} employee(s) found`}
+            {loading ? "Loading employees..." : `${filtered.length} employee(s) found`}
           </div>
-          <div style={{ display: "flex", gap: "8px" }}>
-            <button className="btn btn-soft">View Short Leave Counts</button>
-            <button className="btn btn-primary" onClick={onExportCSV} disabled={loading || !filtered.length}>
+
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", justifyContent: "flex-end" }}>
+            <button className="btn btn-soft" style={{ whiteSpace: "nowrap" }}>
+              View Short Leave Counts
+            </button>
+            <button
+              className="btn btn-primary"
+              onClick={onExportCSV}
+              disabled={loading || !filtered.length}
+              style={{ whiteSpace: "nowrap" }}
+            >
               Export CSV
             </button>
           </div>
@@ -266,29 +267,29 @@ const EmployeeLeaves = () => {
               padding: "12px 16px",
               borderBottom: "1px solid var(--border)",
               display: "flex",
+              flexWrap: "wrap",
+              gap: "8px",
               alignItems: "center",
               justifyContent: "space-between",
             }}
           >
             <div style={{ fontWeight: "700" }}>Employee Leave Balances</div>
             <div style={{ fontSize: "12px", color: "var(--muted)" }}>
-              {loading
-                ? "Loading..."
-                : `Showing ${current.length} of ${filtered.length} records`}
+              {loading ? "Loading..." : `Showing ${current.length} of ${filtered.length} records`}
             </div>
           </div>
 
-          <div style={{ overflowX: "auto", flex: 1 }}>
-            <table className="table">
+          <div style={{ overflowX: "auto" }}>
+            <table className="table" style={{ minWidth: 900 }}>
               <thead>
                 <tr>
-                  <th>Emp No</th>
-                  <th>Employee Name</th>
-                  <th>Department</th>
-                  <th>Annual Leave</th>
-                  <th>Casual Leave</th>
-                  <th>Half Day</th>
-                  <th>Leave Status</th>
+                  <th style={{ whiteSpace: "nowrap" }}>Emp No</th>
+                  <th style={{ whiteSpace: "nowrap" }}>Employee Name</th>
+                  <th style={{ whiteSpace: "nowrap" }}>Department</th>
+                  <th style={{ whiteSpace: "nowrap" }}>Annual Leave</th>
+                  <th style={{ whiteSpace: "nowrap" }}>Casual Leave</th>
+                  <th style={{ whiteSpace: "nowrap" }}>Half Day</th>
+                  <th style={{ whiteSpace: "nowrap" }}>Leave Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -329,40 +330,36 @@ const EmployeeLeaves = () => {
 
                     return (
                       <tr key={employee.employee_id || index}>
-                          <td>{employee.employee_code || employee.employee_id || "-"}</td>
+                        <td style={{ whiteSpace: "nowrap" }}>
+                          {employee.employee_code || employee.employee_id || "-"}
+                        </td>
 
-
-                        <td
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "10px",
-                          }}
-                        >
-                          <div className="user-avatar" />
-                          <div style={{ fontWeight: "600" }}>
-                            {employee.name}
+                        <td style={{ minWidth: 220 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
+                            <div className="user-avatar" style={{ flex: "0 0 auto" }} />
+                            <div
+                              style={{
+                                fontWeight: "600",
+                                minWidth: 0,
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                              }}
+                              title={employee.name}
+                            >
+                              {employee.name}
+                            </div>
                           </div>
                         </td>
+
                         <td>
-                          <span
-                            className="pill"
-                            style={{
-                              background: "var(--soft)",
-                              color: "var(--text)",
-                            }}
-                          >
+                          <span className="pill" style={{ background: "var(--soft)", color: "var(--text)" }}>
                             {employee.department}
                           </span>
                         </td>
-                        <td style={{ minWidth: "140px" }}>
-                          <div
-                            style={{
-                              marginBottom: "4px",
-                              fontSize: "12px",
-                              fontWeight: "600",
-                            }}
-                          >
+
+                        <td style={{ minWidth: 180 }}>
+                          <div style={{ marginBottom: "4px", fontSize: "12px", fontWeight: "600" }}>
                             {annualUsed.toFixed(1)} / {annualTotal} days
                           </div>
                           <div
@@ -384,15 +381,10 @@ const EmployeeLeaves = () => {
                             />
                           </div>
                         </td>
-                        <td style={{ minWidth: "140px" }}>
-                          <div
-                            style={{
-                              marginBottom: "4px",
-                              fontSize: "12px",
-                              fontWeight: "600",
-                            }}
-                          >
-                           {casualUsed.toFixed(1)} / {casualTotal} days
+
+                        <td style={{ minWidth: 180 }}>
+                          <div style={{ marginBottom: "4px", fontSize: "12px", fontWeight: "600" }}>
+                            {casualUsed.toFixed(1)} / {casualTotal} days
                           </div>
                           <div
                             style={{
@@ -413,13 +405,14 @@ const EmployeeLeaves = () => {
                             />
                           </div>
                         </td>
-                        <td
-                          style={{ fontSize: "12px", color: "var(--muted)" }}
-                        >
-                          {employee.halfDay1}
+
+                        <td style={{ fontSize: "12px", color: "var(--muted)", whiteSpace: "nowrap" }}>
+                          {employee.halfDay1 ?? "-"}
+                          {employee.halfDay2 ? `, ${employee.halfDay2}` : ""}
                         </td>
+
                         <td>
-                         <span
+                          <span
                             className={`pill ${
                               annualTotal > 0 && annualUsed >= annualTotal * 0.8
                                 ? "pill-warn"
@@ -427,6 +420,7 @@ const EmployeeLeaves = () => {
                                 ? "pill-soft"
                                 : "pill-ok"
                             }`}
+                            style={{ whiteSpace: "nowrap" }}
                           >
                             {annualTotal > 0 && annualUsed >= annualTotal * 0.8
                               ? "Critical"
@@ -434,7 +428,6 @@ const EmployeeLeaves = () => {
                               ? "Moderate"
                               : "Good"}
                           </span>
-
                         </td>
                       </tr>
                     );
@@ -445,11 +438,13 @@ const EmployeeLeaves = () => {
         </div>
       </div>
 
-      {/* Pagination */}
+      {/* Pagination (wrap-safe) */}
       <div
         className="card"
         style={{
           display: "flex",
+          flexWrap: "wrap",
+          gap: "10px",
           justifyContent: "space-between",
           alignItems: "center",
         }}
@@ -457,20 +452,17 @@ const EmployeeLeaves = () => {
         <div style={{ fontSize: "14px", color: "var(--muted)" }}>
           {loading
             ? "Loading..."
-            : `Showing ${current.length} of ${filtered.length} results (Page ${page} of ${pageCount})`}
+            : `Showing ${current.length} of ${filtered.length} results (Page ${safePage} of ${pageCount})`}
         </div>
-        <div style={{ display: "flex", gap: "8px" }}>
-          <button
-            className="btn btn-soft"
-            disabled={page === 1 || loading}
-            onClick={() => setPage(page - 1)}
-          >
+
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+          <button className="btn btn-soft" disabled={safePage === 1 || loading} onClick={() => setPage(safePage - 1)}>
             Previous
           </button>
           <button
             className="btn btn-soft"
-            disabled={page === pageCount || loading}
-            onClick={() => setPage(page + 1)}
+            disabled={safePage === pageCount || loading}
+            onClick={() => setPage(safePage + 1)}
           >
             Next
           </button>

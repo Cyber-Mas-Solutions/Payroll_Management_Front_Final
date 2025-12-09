@@ -22,7 +22,6 @@ const LeaveCalendar = () => {
     { label: "Leave Approval", path: "/leave-approval" },
     { label: "Calendar", path: "/leave-calendar" },
     { label: "Leave Request", path: "/leave-request" },
-    { label: "Leave Rules", path: "/leave-rules" },
   ];
 
   const today = new Date();

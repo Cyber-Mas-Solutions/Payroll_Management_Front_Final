@@ -1,0 +1,358 @@
+/* ======== Layout ======== */
+.add-employee-container {
+  display: flex;
+  width: 100vw;
+  background-color: #f5f5f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.add-employee-content {
+  flex: 1;
+  margin-left: 210px;
+  width: calc(100vw - 210px);
+  min-height: 100vh;
+  overflow-x: auto;
+  background-color: #f8f9fa;
+  padding: 30px;
+}
+
+/* ======== Header ======== */
+.add-employee-content h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+/* ======== Stepper ======== */
+.stepper {
+  display: flex;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #333;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.step span {
+  background: #e5e7eb;
+  color: #333;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.step.active {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.step.active span {
+  background: #3b82f6;
+  color: white;
+}
+
+/* ======== Section Title ======== */
+.step-section {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 28px 24px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+  transition: all 0.3s ease-in-out;
+}
+
+.step-section h2 {
+  margin-top: 0;
+  margin-bottom: 6px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.section-subtitle {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* ======== Grid Layout ======== */
+.two-column {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.two-column input,
+.two-column select,
+.two-column textarea {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #f9fafb;
+  color: #333;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.two-column input:focus,
+.two-column select:focus,
+.two-column textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: #fff;
+}
+
+.two-column input[type="date"] {
+  color: #333;
+}
+
+.two-column textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+.root> div > div.add-employee-content > form > div.step-section > div > select:nth-child(12){
+  margin-right: 100px;
+}
+/* ======== Phone Input with Country Code ======== */
+.phone-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #333;
+}
+
+.country-code {
+  width: 100px;
+  padding: 10px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #f9fafb;
+  color: #333;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.country-code:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: #fff;
+}
+
+.phone-number {
+  flex: 1;
+  padding: 10px 20px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #f9fafb;
+  color: #333;
+}
+
+.phone-number:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: #fff;
+}
+
+/* ======== Upload Sections ======== */
+.upload-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.upload-box label {
+  font-weight: 600;
+  color: #333;
+}
+
+.upload-box input[type="file"] {
+  border: 2px dashed #d1d5db;
+  padding: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #333;
+  background-color: #fafafa;
+  transition: border-color 0.3s;
+}
+
+.upload-box input[type="file"]:hover {
+  border-color: #3b82f6;
+}
+
+.react-tel-input .form-control {
+  width:100%!important;
+  height: 42px !important;
+  font-size: 14px !important;
+  border-radius: 6px !important;
+  background-color: #f9fafb !important;
+  color: #333 !important;
+}
+
+.react-tel-input .flag-dropdown {
+  border-radius: 6px 0 0 6px !important;
+}
+
+.react-tel-input .country-list {
+  border-radius: 8px !important;
+  z-index: 9999;
+  color: #333;
+}
+
+/* ======== Date Input Styling ======== */
+.two-column input[type="date"] {
+  color: #3b82f6; /* Text color (your theme blue) */
+  background-color: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Change color on focus */
+.two-column input[type="date"]:focus {
+  border-color: #3b82f6;
+  background-color: #fff;
+  color: #3b82f6;
+  outline: none;
+}
+
+/* Calendar icon color for Chrome, Edge, Safari */
+.two-column input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(38%) sepia(94%) saturate(3086%) hue-rotate(204deg) brightness(95%) contrast(101%);
+  cursor: pointer;
+}
+
+/* Optional: uppercase text display */
+.two-column input[type="date"] {
+  text-transform: uppercase;
+}
+
+/* ======== Form Actions ======== */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.cancel-btn,
+.submit-btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.cancel-btn {
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+  color: #374151;
+}
+
+.cancel-btn:hover {
+  background-color: #e5e7eb;
+  transform: translateY(-1px);
+}
+
+.submit-btn {
+  background-color: #3b82f6;
+  border: none;
+  color: white;
+}
+
+.submit-btn:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* ======== Error Text ======== */
+.error-text {
+  color: crimson;
+  background: #ffe9e9;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  border: 1px solid #ffb3b3;
+}
+
+/* small cards list in Edit step */
+.doc-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(260px,1fr)); gap: 16px; padding-left: 0; list-style: none; }
+.doc-card { display: grid; grid-template-columns: 110px 1fr; gap: 12px; border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px; background: #fff; }
+.doc-card .thumb { width: 110px; height: 110px; display: grid; place-items: center; background: #f8fafc; border-radius: 8px; overflow: hidden; }
+.doc-card .thumb img, .doc-card .thumb iframe { width: 100%; height: 100%; object-fit: contain; border: 0; }
+.doc-card .file-icon { font-size: 40px; }
+.doc-card .meta .name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.doc-card .meta .type { color:#6b7280; font-size:12px; margin-top: 2px; }
+.doc-card .actions { display:flex; gap:8px; margin-top:8px; }
+.doc-act { padding:4px 10px; border:1px solid #d1d5db; border-radius:6px; background:#fff; font-size:12px; }
+.doc-act.danger { border-color:#ef4444; color:#ef4444; }
+.employee-avatar-small img { width: 28px; height: 28px; border-radius: 999px; object-fit: cover; }
+
+
+/* ======== Responsive Design ======== */
+@media (max-width: 992px) {
+  .add-employee-content {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .stepper {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cancel-btn,
+  .submit-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .add-employee-content h1 {
+    font-size: 20px;
+  }
+
+  .step-section h2 {
+    font-size: 18px;
+  }
+
+  .two-column {
+    grid-template-columns: 1fr;
+  }
+}
+

@@ -23,7 +23,6 @@ const LeaveRequest = () => {
     { label: "Leave Approval", path: "/leave-approval" },
     { label: "Calendar", path: "/leave-calendar" },
     { label: "Leave Request", path: "/leave-request" },
-    { label: "Leave Rules", path: "/leave-rules" },
   ];
 
   /** Filters */

@@ -44,7 +44,7 @@ export default function UnpaidLeaves() {
     try {
       setLoading(true);
       setError("");
-      const resp = await apiGet("/salary/unpaid-leaves"); 
+      const resp = await apiGet("/salary/unpaid-leaves");
       const data = Array.isArray(resp.data) ? resp.data : resp.data?.data || [];
       setRows(data);
     } catch (e) {
@@ -202,13 +202,12 @@ export default function UnpaidLeaves() {
   };
 
   const handleProcessDeduction = async (leave) => {
-    if (!window.confirm(`Process salary deduction for ${leave.full_name}'s unpaid leave? This will create a deduction entry in the payroll system.`)) return;
+    if (!window.confirm(`Process salary deduction for ${leave.full_name}'s unpaid leave?`)) return;
     
     try {
-      // NOTE: This calls the new processing logic in salary.controller.js
       await apiPost(`/salary/unpaid-leaves/${leave.id}/process`, {});
       fetchUnpaidLeaves();
-      window.alert("Salary deduction processed successfully and added to deductions.");
+      window.alert("Salary deduction processed successfully");
     } catch (e) {
       console.error(e);
       window.alert("Failed to process salary deduction");
@@ -240,7 +239,7 @@ export default function UnpaidLeaves() {
         r.deduction_amount || "",
         r.status || "",
       ];
-      csvRows.push(row.map(cell => `"${cell}"`).join(","));
+      csvRows.push(row.join(","));
     });
 
     const blob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
@@ -262,17 +261,14 @@ export default function UnpaidLeaves() {
     return `${month}/${day}/${year}`;
   };
 
-  const formatCurrency = (n) => {
-    const amount = Number(n || 0);
-    return amount > 0 ? `Rs ${amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}` : "-";
-  };
+  const formatCurrency = (n) => `Rs ${Number(n || 0).toLocaleString()}`;
 
   return (
     <Layout>
       {/* Fixed Header Section */}
       <PageHeader breadcrumb={["Salary & Compensation", "Unpaid Leaves"]} title="Salary & Compensation" />
 
-      {/* Fixed Tabs Section (Corrected to exclude Leave Rules) */}
+      {/* Fixed Tabs Section */}
       <div
         style={{
           position: "sticky",
@@ -300,10 +296,8 @@ export default function UnpaidLeaves() {
             { label: "Overtime & Adjustments", path: "/overtime-adjustments" },
             { label: "Compensation Adjustment", path: "/compensation-adjustment" },
             { label: "ETF & EPF", path: "/etf-epf" },
-            { label: "ETF/EPF Process", path: "/etf-epf-process" },
             { label: "Unpaid Leaves", path: "/unpaid-leaves" },
             { label: "Net Salary Summary", path: "/net-salary-summary" },
-            // Note: Leave Rules tab is intentionally excluded from the Salary navbar.
           ].map((t) => (
             <button
               key={t.path}
@@ -317,33 +311,13 @@ export default function UnpaidLeaves() {
         </div>
       </div>
 
-      {/* Deduction Rule Card (Requested Explanation) */}
-      <div className="card" style={{ 
-          margin: "16px 24px 0 24px", 
-          border: "1px solid var(--danger)", 
-          background: "#fef2f2", 
-          color: "var(--danger)" 
-        }}>
-          <h4 style={{ margin: 0, marginBottom: "8px" }}>Unpaid Leave Deduction Policy</h4>
-          <p style={{ margin: 0, fontSize: "14px" }}>
-            Unpaid leave records are created automatically when an employee's annual or medical leave usage exceeds their grade-specific limit (set in the Leave Management section).
-          </p>
-          <p style={{ margin: "8px 0 0 0", fontWeight: "600" }}>
-            Deduction Amount (if manual amount is not set): 
-            <span style={{ color: "var(--brand)", marginLeft: "5px" }}>
-              (Basic Salary / 30 Days) &times; Total Unpaid Leave Days
-            </span>
-          </p>
-      </div>
-
       {/* Fixed Filters Section */}
       <div
         style={{
           position: "sticky",
-          top: "56px", 
+          top: "56px",
           zIndex: 90,
           backgroundColor: "var(--bg)",
-          paddingTop: "16px", 
         }}
       >
         {/* Filters Card */}
@@ -500,34 +474,25 @@ export default function UnpaidLeaves() {
                         <td>{formatDate(leave.end_date)}</td>
                         <td>{leave.total_days}</td>
                         <td>{leave.reason || "-"}</td>
-                        <td>
-                          {/* Display status if amount is pending calculation */}
-                          {leave.status === 'Approved' && !leave.deduction_amount
-                            ? <span className="pill pill-warn">Pending Calc</span>
-                            : formatCurrency(leave.deduction_amount)
-                          }
-                        </td>
+                        <td>{formatCurrency(leave.deduction_amount)}</td>
                         <td>
                           <span className={`pill ${
                             leave.status === "Approved" ? "pill-ok" : 
-                            leave.status === "Rejected" ? "pill-danger" : 
-                            leave.status === "Processed" ? "pill-soft" :
-                            "pill-warn"
+                            leave.status === "Rejected" ? "pill-warn" : 
+                            "pill-soft"
                           }`}>
                             {leave.status}
                           </span>
                         </td>
                         <td>
                           <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                            {leave.status !== 'Processed' && (
-                              <button 
-                                className="btn btn-soft" 
-                                onClick={() => openEditModal(leave)}
-                                style={{ fontSize: "11px", padding: "4px 8px" }}
-                              >
-                                Edit
-                              </button>
-                            )}
+                            <button 
+                              className="btn btn-soft" 
+                              onClick={() => openEditModal(leave)}
+                              style={{ fontSize: "11px", padding: "4px 8px" }}
+                            >
+                              Edit
+                            </button>
                             {leave.status === "Approved" && (
                               <button 
                                 className="btn btn-primary" 
@@ -537,21 +502,19 @@ export default function UnpaidLeaves() {
                                 Process
                               </button>
                             )}
-                            {leave.status !== 'Processed' && (
-                              <button 
-                                className="btn btn-soft" 
-                                onClick={() => handleDelete(leave)}
-                                style={{ 
-                                  fontSize: "11px", 
-                                  padding: "4px 8px",
-                                  background: "#fef2f2",
-                                  color: "#dc2626",
-                                  border: "1px solid #fecaca"
-                                }}
-                              >
-                                Delete
-                              </button>
-                            )}
+                            <button 
+                              className="btn btn-soft" 
+                              onClick={() => handleDelete(leave)}
+                              style={{ 
+                                fontSize: "11px", 
+                                padding: "4px 8px",
+                                background: "#fef2f2",
+                                color: "#dc2626",
+                                border: "1px solid #fecaca"
+                              }}
+                            >
+                              Delete
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -625,7 +588,7 @@ export default function UnpaidLeaves() {
                   />
                 </div>
                 <div>
-                  <label>Deduction Amount (Manual Override)</label>
+                  <label>Deduction Amount</label>
                   <input
                     type="number"
                     name="deduction_amount"

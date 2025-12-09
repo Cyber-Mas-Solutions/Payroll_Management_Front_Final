@@ -1,0 +1,433 @@
+/* =====================================
+   VIEW EMPLOYEE PAGE STYLES
+   Matches AddEmployee.css visual theme
+===================================== */
+
+/* ======== Layout ======== */
+.view-employee-container {
+  display: flex;
+  width: 100vw;
+  background-color: #f5f5f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.view-employee-content {
+  flex: 1;
+  margin-left: 210px;
+  width: calc(100vw - 210px);
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-color: #f8f9fa;
+  padding: 30px;
+}
+
+/* ======== Header ======== */
+.header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+/* ======== Profile Card ======== */
+.employee-profile-card {
+  display: flex;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  margin-bottom: 30px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* ======== Left Section (Profile) ======== */
+.profile-left {
+  width: 280px;
+  background: #f9fafb;
+  border-right: 1px solid #e5e7eb;
+  text-align: center;
+  padding: 30px 20px;
+}
+
+.profile-photo img {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #3b82f6;
+  background: white;
+}
+
+.profile-placeholder {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  margin: 0 auto;
+}
+
+.profile-left h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-top: 14px;
+}
+
+.profile-left p {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.profile-details {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #374151;
+  text-align: left;
+}
+
+.profile-details p {
+  margin: 6px 0;
+}
+
+.status-toggle.active {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.status-toggle.inactive {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+/* ======== Right Section (Tabs + Content) ======== */
+.profile-right {
+  flex: 1;
+  padding: 30px 40px;
+}
+
+/* ======== Tabs ======== */
+.tab-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #e5e7eb;
+  flex-wrap: wrap;
+}
+
+.tab-buttons button {
+  background: transparent;
+  border: none;
+  color: #374151;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 10px 18px;
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-buttons button:hover {
+  color: #2563eb;
+  background-color: #f3f4f6;
+}
+
+.tab-buttons button.active {
+  background-color: #3b82f6;
+  color: #fff;
+}
+
+/* ======== Tab Content ======== */
+.tab-content {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 28px 32px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* ======== Field Labels & Values ======== */
+.details-grid label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.details-grid p {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #111827;
+  height: 42px;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+}
+
+/* ======== Document Links ======== */
+.doc-link {
+  color: #2563eb;
+  font-weight: 500;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.doc-link:hover {
+  color: #1e40af;
+}
+
+/* ======== Action Buttons ======== */
+.view-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 25px;
+  gap: 12px;
+}
+
+.edit-btn,
+.back-btn {
+  padding: 10px 22px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.edit-btn {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+}
+
+.edit-btn:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.back-btn {
+  background-color: #e5e7eb;
+  color: #111827;
+  border: none;
+}
+
+.back-btn:hover {
+  background-color: #d1d5db;
+  transform: translateY(-1px);
+}
+
+/* ======== Loading & Error ======== */
+.loading,
+.error {
+  text-align: center;
+  font-size: 16px;
+  margin-top: 60px;
+}
+
+.error {
+  color: #dc2626;
+  font-weight: 500;
+}
+
+/* ======== Field Consistency ======== */
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #f9fafb;
+  color: #111827;
+  height: 42px;
+  transition: all 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: #fff;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='12' viewBox='0 0 24 24' width='12' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+}
+
+/* ======== Responsive ======== */
+@media (max-width: 992px) {
+  .view-employee-content {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .employee-profile-card {
+    flex-direction: column;
+  }
+
+  .profile-left {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .profile-right {
+    padding: 20px;
+  }
+
+  .tab-buttons {
+    flex-wrap: wrap;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .tab-content {
+    padding: 20px;
+  }
+
+  .header h1 {
+    font-size: 20px;
+  }
+
+  .profile-left h3 {
+    font-size: 16px;
+  }
+
+  .edit-btn,
+  .back-btn {
+    width: 100%;
+  }
+
+  .view-actions {
+    flex-direction: column;
+  }
+}
+
+
+/* === Document preview grid === */
+.doc-grid-wrapper {
+  grid-column: 1 / -1;
+}
+
+.doc-grid-title {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.doc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.doc-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.doc-thumb {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border: 1px solid #eef2f7;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+}
+
+.doc-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.doc-thumb iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #fff;
+}
+
+.doc-icon {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.doc-meta {
+  font-size: 12px;
+  color: #4b5563;
+  display: grid;
+  gap: 2px;
+}
+
+.doc-name {
+  font-weight: 600;
+  color: #111827;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.doc-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.doc-link {
+  font-size: 12px;
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+/* thumbnails / previews */
+.doc-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 16px; }
+.doc-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; }
+.doc-thumb { width: 100%; height: 180px; display: grid; place-items: center; background: #f8fafc; border-radius: 8px; overflow: hidden; }
+.doc-thumb img, .doc-thumb iframe { width: 100%; height: 100%; object-fit: contain; border: 0; }
+.doc-icon { font-size: 56px; }
+.doc-meta { margin-top: 8px; line-height: 1.2; }
+.doc-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.doc-type, .doc-date { color: #6b7280; font-size: 12px; }
+.doc-actions { margin-top: 8px; display: flex; gap: 10px; }
+.doc-link { color: #2563eb; font-size: 13px; }
+.doc-chip { background:#eef2ff; color:#3730a3; border-radius: 999px; padding:2px 8px; font-size:12px; }
+.profile-photo img { width: 84px; height: 84px; border-radius: 999px; object-fit: cover; }
+

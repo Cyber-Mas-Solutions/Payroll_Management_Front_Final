@@ -123,7 +123,7 @@ export async function apiUpload(path, formData, method = 'POST') {
 // api with parameters
 export async function apiGetWithParams(path, params = {}, opts = {}) {
   // Build query string
-  let url = path;
+  let url = `${API_BASE}${path}`;
   const query = new URLSearchParams();
 
   for (const key in params) {
@@ -136,31 +136,19 @@ export async function apiGetWithParams(path, params = {}, opts = {}) {
   const queryString = query.toString();
   if (queryString) url += `?${queryString}`;
 
-  const finalUrl = `${API_BASE}${url}`;
-
-  const res = await fetch(finalUrl, {
-    method: opts.method || 'GET',
+  const res = await fetch(url, {
     credentials: 'include',
     headers: authHeaders(opts.headers || {}),
     ...opts,
   });
-  
-  const ct = res.headers.get('content-type') || '';
-  const isJSON = ct.includes('application/json');
-  const body = isJSON ? await res.json().catch(() => ({})) : await res.text().catch(() => '');
 
   if (!res.ok) {
-    // Ensure the thrown error contains the status/message if available in JSON body
-    const msg =
-      (isJSON && body && (body.message || body.error)) ||
-      (typeof body === 'string' && body) ||
-      `Request failed: ${res.status}`;
-    throw new Error(msg);
+    const text = await res.text().catch(() => '');
+    throw new Error(text || `Request failed: ${res.status}`);
   }
 
-  // **CRITICAL FIX**: Return the entire body (which includes {ok: true, data: [...]})
-  // This matches the consuming component's expected structure: `const data = res.ok && Array.isArray(res.data)`
-  return body;
+  const ct = res.headers.get('content-type') || '';
+  return ct.includes('application/json') ? res.json() : res.text();
 }
 
 // Time & Attendance API calls
@@ -224,10 +212,6 @@ export const leaveApi = {
       `/leaves/calendar/restrictions/0?date=${encodeURIComponent(date)}`
     ),
 
-  // 🔹 NEW: Grade-based Leave Rules
-  getRules: () => apiGet('/leaves/rules'),
-  saveRule: (data) => apiPost('/leaves/rules', data),
-
   
 };
 
@@ -246,24 +230,14 @@ export const contractsApi = {
 };
 
 // epf etf
-// epf etf
 export const etfEpfApi = {
   getRecords: () => apiGet('/salary/etf-epf'),
   getEmployeesWithout: () => apiGet('/salary/etf-epf/employees-without'),
-  
   getById: (id) => apiGet(`/salary/etf-epf/${id}`),
   create: (data) => apiPost('/salary/etf-epf', data),
   update: (id, data) => apiPut(`/salary/etf-epf/${id}`, data),
   delete: (id) => apiDelete(`/salary/etf-epf/${id}`),
   calculate: (data) => apiPost('/salary/etf-epf/calculate', data),
-
-  // NEW FUNCTIONS FOR ETF/EPF PROCESSING
-  getProcessList: ({ year, month }) => 
-    apiGetWithParams('/salary/etf-epf/process-list', { year, month }), 
-    
-  processPayment: (payload) => 
-    apiPost('/salary/etf-epf/process-payment', payload),
-  
 };
 
 

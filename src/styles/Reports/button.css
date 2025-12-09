@@ -1,0 +1,46 @@
+.buttonsSection {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+}
+
+.button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #E4E4E7;
+    color: #000;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.button:hover {
+    background-color: #D4D4D8;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 210px;
+    width: calc(100vw - 210px);
+    min-height: 100vh;
+    overflow-x: auto;
+    background-color: #f8f9fa;
+}
+
+@media (max-width: 992px) {
+  .main-content {
+    margin-left: 0;
+    padding: 15px;
+  }
+  
+  .overview-items,
+  .section-items {
+    flex-direction: column;
+  }
+}

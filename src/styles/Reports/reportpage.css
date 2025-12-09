@@ -1,0 +1,32 @@
+.report-content {
+    background-color: #FFF;
+    border-radius: 10px;
+    width: 95%;
+    color: black;
+}
+
+.report-info-content {
+  flex: 1;
+  margin-left: 200px;
+  width: calc(100vw - 210px);
+  min-height: 100vh;
+  overflow-x: auto;
+  background-color: #f8f9fa;
+}
+
+
+.header-left .breadcrumb {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.breadcrumb-separator {
+  margin: 0 8px;
+}
+
+.breadcrumb-item.active {
+  color: #333;
+  font-weight: 500;
+}
+

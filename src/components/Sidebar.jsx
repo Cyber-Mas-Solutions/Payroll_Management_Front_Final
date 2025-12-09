@@ -25,7 +25,6 @@ const Sidebar = () => {
         { label: 'Overtime & Adjustments', path: '/overtime-adjustments' },
         { label: 'Compensation Adjustment', path: '/compensation-adjustment' },
         { label: 'ETF & EPF', path: '/etf-epf'},
-        { label: "ETF/EPF Process", path: "/etf-epf-process" },
         { label: 'Unpaid Leaves', path: '/unpaid-leaves'},
         { label: 'Net Salary Summary', path: '/net-salary-summary' },
       ],
@@ -56,7 +55,7 @@ const Sidebar = () => {
   // Define all salary compensation related paths
   const salaryCompensationPaths = [
     '/earnings', '/deductions', '/allowances', '/overtime-adjustments',
-    '/compensation-adjustment', '/net-salary-summary', '/add-deduction', '/add-allowance', '/etf-epf', '/etf-epf-process','/unpaid-leaves'
+    '/compensation-adjustment', '/net-salary-summary', '/add-deduction', '/add-allowance'
   ];
 
   const employeeInfoPaths = [
