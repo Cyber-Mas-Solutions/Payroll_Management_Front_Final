@@ -1,0 +1,254 @@
+
+.leaves-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
+}
+
+.leaves-content {
+  flex: 1;
+  margin-left: 210px;
+  width: calc(100vw - 210px);
+  min-height: 100vh;
+  overflow-x: auto;
+  background-color: #f8f9fa;
+}
+
+
+.leaves-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 24px;
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.breadcrumb-separator {
+  margin: 0 6px;
+  color: #9ca3af;
+}
+
+.breadcrumb-item.active {
+  color: #111827;
+  font-weight: 500;
+}
+
+.page-title {
+  margin-top: 6px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* 📌 TAB CARDS */
+.leaves-tabs {
+  display: flex;
+  gap: 16px;
+  padding: 16px 24px;
+}
+
+.leaves-tab {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px 20px;
+  min-width: 180px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: #374151;
+  font-weight: 500;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.leaves-tab .tab-icon {
+  font-size: 20px;
+}
+
+.leaves-tab:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.leaves-tab.active {
+  border-color: #1976d2;
+  box-shadow: 0 2px 12px rgba(25, 118, 210, 0.18);
+}
+
+/* 📌 FILTERS SECTION */
+.leaves-filters {
+  background: #fff;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 14px 24px;
+  display: grid;
+  grid-template-columns: 1fr 300px auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.filter-employee,
+.filter-dept {
+  height: 38px;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
+  background: #fff;
+}
+
+.filters-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  height: 38px;
+  border-radius: 8px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn.ghost {
+  background: #e9f1ff;
+  color: #1976d2;
+  border-color: #d7e5ff;
+}
+
+.btn.primary {
+  background: #1976d2;
+  color: #fff;
+}
+
+.btn.primary:hover {
+  background: #1565c0;
+}
+
+/* 📌 TABLE WRAPPER CARD */
+.leaves-table-card {
+  margin: 16px 24px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* 📌 LEAVES TABLE */
+.leaves-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaves-table th,
+.leaves-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+  color: #374151;
+  text-align: left;
+}
+
+.leaves-table th {
+  background: #f9fafb;
+  font-weight: 600;
+  color: #111827;
+}
+
+.col-employee {
+  width: 48%;
+}
+
+/* 📌 EMPLOYEE COLUMN CONTENT */
+.emp-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: #e5ecff;
+  color: #1d4ed8;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emp-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.emp-name {
+  font-weight: 400;
+  color: #111827;
+}
+
+.emp-code {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* 📌 EMPTY TABLE STATE */
+.empty-row {
+  text-align: center;
+  color: #9ca3af;
+  padding: 24px 0;
+}
+
+/* 📌 PAGINATION */
+.leaves-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #fff;
+}
+
+.pager-btn {
+  padding: 6px 12px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pager-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-indicator {
+  color: #4b5563;
+  font-size: 14px;
+}
+
+/* 📌 HISTORY TAB PLACEHOLDER */
+.history-placeholder {
+  padding: 24px;
+}
+
+.history-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 18px;
+}

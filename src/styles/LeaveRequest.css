@@ -1,0 +1,290 @@
+/* Page Layout */
+.leave-request-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
+}
+.leave-request-content {
+  flex: 1;
+  margin-left: 210px;
+  width: calc(100vw - 210px);
+  background-color: #f8f9fa;
+}
+
+/* Header */
+.leave-request-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 24px;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+}
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #6b7280;
+}
+.breadcrumb-separator {
+  margin: 0 6px;
+  color: #9ca3af;
+}
+.breadcrumb-item.active {
+  color: #111827;
+  font-weight: 500;
+}
+.page-title {
+  margin-top: 6px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Tabs */
+.tab-bar {
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 12px 24px 0;
+}
+.tab-link {
+  background: none;
+  border: none;
+  padding: 12px 20px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.tab-link.active {
+  color: #1976d2;
+  font-weight: 600;
+  border-bottom: 2px solid #1976d2;
+}
+.tab-link:hover {
+  color: #1976d2;
+}
+
+/* Stats strip (spacing + subtle UI like screenshot) */
+.stats-strip {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 24px;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+}
+.stat {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid #eef0f2;
+  border-radius: 10px;
+  background: #fff;
+}
+.stat-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: #eef2ff;
+}
+.stat-icon.received { background: #eef2ff; }
+.stat-icon.accepted { background: #e8fff0; }
+.stat-icon.rejected { background: #ffecec; }
+.stat-value {
+  font-size: 16px;
+  color: #111827;
+  font-weight: 600;
+  line-height: 1.1;
+}
+.stat-label {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Filters */
+.leave-filters {
+  background: white;
+  padding: 14px 24px;
+  display: flex;
+  gap: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.filter-input {
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  flex: 1;
+}
+.export-btn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.export-btn:hover { background: #1565c0; }
+
+/* Table */
+.leave-request-table {
+  width: 97%;
+  margin: 20px auto;
+  background: white;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  color: #374151;
+  font-size: 14px;
+}
+.leave-request-table th,
+.leave-request-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+.leave-request-table th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+.col-actions {
+  width: 110px;
+}
+.action-btn {
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.action-btn:hover { background: #1565c0; }
+.empty-row {
+  text-align: center;
+  color: #9ca3af;
+  padding: 24px;
+}
+
+/* ===== Action Modal (matches screenshot precisely) ===== */
+.lr-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+.lr-modal {
+  width: 860px;               /* wide like the image */
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.15);
+  padding: 16px 20px 14px;
+}
+.lr-modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.lr-modal-head h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+.lr-close-link {
+  background: red;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+.lr-close-link:hover { color: #f9fafc; }
+
+/* 3 columns grid like screenshot */
+.lr-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  column-gap: 20px;
+  row-gap: 14px;
+  margin-top: 8px;
+}
+.lr-field label {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+.lr-field input {
+  width: 100%;
+  height: 35px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0 10px;
+  color: #374151;
+  background: #f9fafb;       /* read-only look */
+}
+.lr-col-span-3 {
+  grid-column: span 3;
+}
+/* Match font style for comment labels */
+.lr-field label {
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+/* Ensure consistency for textarea */
+.lr-field textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  color: #374151;
+  background: #fff;
+  resize: vertical;
+}
+
+
+/* inline action radios */
+.lr-actions-inline {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  height: 60px;
+}
+.lr-radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #374151;
+}
+
+/* footer with Send on the left (like your image) */
+.lr-footer {
+  display: flex;
+  justify-content: flex-start;  /* left aligned */
+  margin-top: 10px;
+}
+.lr-send-btn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.lr-send-btn:hover { background: #1565c0; }
