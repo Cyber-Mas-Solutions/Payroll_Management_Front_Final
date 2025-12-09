@@ -184,6 +184,7 @@ export default function Earnings() {
             { label: "Overtime & Adjustments", path: "/overtime-adjustments" },
             { label: "Compensation Adjustment", path: "/compensation-adjustment" },
             { label: "ETF & EPF", path: "/etf-epf" },
+            { label: "ETF/EPF Process", path: "/etf-epf-process" },
             { label: "Unpaid Leaves", path: "/unpaid-leaves" },
             { label: "Net Salary Summary", path: "/net-salary-summary" },
           ].map((t) => (
