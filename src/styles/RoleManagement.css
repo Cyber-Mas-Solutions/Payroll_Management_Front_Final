@@ -1,0 +1,342 @@
+/* ======= Layout ======= */
+.role-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
+}
+
+.role-content {
+  flex: 1;
+  margin-left: 210px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  overflow-x: auto;
+}
+
+/* ======= Header ======= */
+.role-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
+.subtitle {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* Add Role Button */
+.add-role-btn {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.add-role-btn:hover {
+  background-color: #1e40af;
+}
+
+/* ======= Tabs ======= */
+.role-tabs {
+  display: flex;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 10px 24px;
+  gap: 18px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.role-tabs::-webkit-scrollbar {
+  display: none;
+}
+.tab-btn {
+  background: none;
+  border: none;
+  color: #374151;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 10px 8px;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.tab-btn:hover {
+  color: #2563eb;
+}
+.tab-btn.active {
+  color: #2563eb;
+  border-color: #2563eb;
+  font-weight: 600;
+}
+
+/* ======= Search Bar ======= */
+.role-search-bar {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 16px 24px;
+}
+.search-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.search-input:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* ======= Table ======= */
+.role-table-section {
+  background: #ffffff;
+  margin: 20px 24px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.role-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  table-layout: fixed;
+}
+.role-table th {
+  text-align: left;
+  padding: 14px 20px;
+  background: #f9fafb;
+  font-weight: 600;
+  color: #6b7280;
+  border-bottom: 1px solid #e5e7eb;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+.role-table td {
+  padding: 14px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+  vertical-align: middle;
+}
+.role-table tr:hover td {
+  background-color: #f9fafb;
+}
+.role-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* ======= Role Name ======= */
+.role-name {
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+}
+.role-name:hover {
+  text-decoration: underline;
+}
+
+/* ======= User Count ======= */
+.user-count {
+  font-weight: 600;
+  color: #111827;
+}
+
+/* ======= Action Buttons ======= */
+.action-buttons {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+/* Edit Button (Blue) */
+.edit-btn {
+  background-color: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.edit-btn:hover {
+  background-color: #1e40af;
+}
+
+/* Delete Button (Red) */
+.delete-btn {
+  background-color: #dc2626;
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.delete-btn:hover {
+  background-color: #b91c1c;
+}
+
+/* ======= Footer ======= */
+.table-footer {
+  padding: 14px 20px;
+  background: #f9fafb;
+  font-size: 13px;
+  color: #6b7280;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* ======= Modal (Add/Edit Role) ======= */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.25); /* slightly transparent, no blur */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  padding: 28px 30px;
+  border-radius: 10px;
+  width: 440px;
+  max-width: 90%;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  animation: fadeInUp 0.25s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.modal-content h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+/* Form Styles inside Modal */
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modal-content label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ======= Inputs, Selects, and Textareas ======= */
+.modal-content input,
+.modal-content select {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #111827;
+  background-color: #fff;
+}
+.modal-content input:focus,
+.modal-content select:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* ======= Description Field (Improved) ======= */
+.modal-content textarea {
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+  color: #111827;
+  resize: vertical;
+  min-height: 80px;
+  background-color: #f9fafb;
+  transition: all 0.2s ease;
+}
+.modal-content textarea:focus {
+  background-color: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+  outline: none;
+}
+
+/* ======= Modal Buttons ======= */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.save-btn {
+  background-color: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.save-btn:hover {
+  background-color: #1e40af;
+}
+
+.cancel-btn {
+  background-color: #6b7280;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.cancel-btn:hover {
+  background-color: #4b5563;
+}
+
+/* ======= Animation ======= */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

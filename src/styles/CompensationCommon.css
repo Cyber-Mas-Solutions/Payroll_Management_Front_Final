@@ -1,0 +1,65 @@
+/* Container & layout (aligned with Deductions.css palette/spacing) */
+.comp-container{display:flex;width:100vw;background:#f8f9fa;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+.comp-content{flex:1;margin-left:210px;width:calc(100vw - 210px);
+  min-height:100vh;overflow-x:auto;background:#f8f9fa}
+
+/* Header */
+.comp-header{display:flex;justify-content:space-between;align-items:flex-start;
+  padding:20px 24px;background:#fff;border-bottom:1px solid #e5e7eb}
+.comp-breadcrumb{font-size:12px;color:#666;margin-bottom:5px}
+.comp-breadcrumb .active{color:#333;font-weight:600}
+.comp-title{font-size:22px;font-weight:700;color:#333;margin:0}
+.comp-right{display:flex;align-items:center;gap:20px}
+.comp-avatar{width:35px;height:35px;border-radius:50%;background:#ddd;border:2px solid #e0e0e0}
+
+/* Tabs (same pattern as Salary & Compensation tabs) */
+.comp-tabs{display:flex;background:#fff;border-bottom:1px solid #e0e0e0;padding:0 30px}
+.comp-tab{padding:15px 20px;font-size:13px;font-weight:500;color:#666;cursor:pointer;
+  border-bottom:2px solid transparent;transition:.2s;white-space:nowrap}
+.comp-tab:hover{color:#333}
+.comp-tab.active{color:#1976d2;border-bottom-color:#1976d2;font-weight:600}
+
+/* Sections & cards */
+.sc-section{padding:25px 30px}
+.sc-card{background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:20px}
+.sc-grid{display:grid;gap:20px}
+.sc-grid-2{grid-template-columns:1fr 1fr}
+.sc-grid-3{grid-template-columns:repeat(3,minmax(280px,1fr))}
+.sc-subtitle{margin:0 0 10px 0;font-size:16px;font-weight:600;color:#333}
+.sc-muted{font-size:12px;color:#6b7280}
+.sc-row{display:flex;gap:12px;align-items:center}
+
+/* Inputs */
+.sc-label{display:block;font-size:13px;font-weight:600;color:#333;margin:10px 0 6px}
+.sc-input,.sc-select,.sc-textarea{width:100%;box-sizing:border-box;padding:10px 12px;
+  border:1px solid #d1d5db;border-radius:6px;font-size:14px;background:#fff;color:#333}
+.sc-textarea{min-height:90px;resize:vertical}
+.sc-input:focus,.sc-select:focus,.sc-textarea:focus{outline:none;border-color:#3b82f6}
+
+/* Tables */
+.sc-table-wrap{padding:0 30px}
+.sc-table{width:100%;border-collapse:collapse;margin:18px 0}
+.sc-table th{background:#f8f9fa;padding:12px 14px;text-align:left;font-weight:600;
+  color:#333;font-size:12px;border-bottom:1px solid #e5e7eb}
+.sc-table td{padding:12px 14px;border-bottom:1px solid #f0f0f0;font-size:12px;color:#333}
+
+/* Buttons */
+.sc-actions{display:flex;gap:10px;align-items:center}
+.btn{padding:8px 14px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer}
+.btn-primary{background:#1976d2;color:#fff}
+.btn-primary:hover{background:#1565c0}
+.btn-gray{background:#6c757d;color:#fff}
+.btn-gray:hover{background:#5a6268}
+.btn-danger{background:#e53935;color:#fff}
+.btn-danger:hover{background:#d32f2f}
+.btn-soft{background:#eef2f7;color:#374151}
+
+/* Status pill */
+.pill{padding:4px 8px;border-radius:12px;font-size:11px;font-weight:600}
+.pill.ok{background:#e8f5e9;color:#2e7d32}
+.pill.warn{background:#fff7e6;color:#b26a00}
+
+/* Responsive */
+@media (max-width: 992px){.sc-grid-2,.sc-grid-3{grid-template-columns:1fr}}
+@media (max-width: 768px) {.comp-content { margin-left: 60px; width: 100%; padding: 10px;}}
