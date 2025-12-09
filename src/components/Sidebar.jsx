@@ -49,7 +49,7 @@ const Sidebar = () => {
       icon: '📈',
       path: '/report-analytics',
     },
-    { id: 'administration', label: 'Administration', icon: '⚙️', path: '/administration', hasSubmenu: true },
+        { id: 'administration', label: 'Administration', icon: '⚙️', path: '/administrative' },
     { id: 'security-access-control', label: 'Security & Access', icon: '🔒', path: '/security-access-control' },
   ];
 
@@ -78,6 +78,11 @@ const Sidebar = () => {
   const reportAnalyticsPath = [
     '/report-analytics/payroll-summary', "/report-analytics/cost-center-analysis", "/report-analytics/compensation-trends", "/report-analytics/forecasting"
   ]
+
+  const administrativePaths = [
+    '/administrative', '/administrative/departments', '/administrative/shifts',
+    '/administrative/holidays', '/administrative/announcements', '/administrative/roles'
+  ];
 
   const getActiveItem = () => {
     const currentPath = location.pathname;
