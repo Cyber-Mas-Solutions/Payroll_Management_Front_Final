@@ -92,7 +92,7 @@ const PayrollProcessing = () => {
           <div className="card" style={{ margin: 0 }}>
             <div style={{ fontSize: 13, color: "var(--muted)" }}>Net Salary</div>
             <div style={{ fontSize: 24, fontWeight: 700, margin: "6px 0" }}>
-              $324,456.00
+              $324,876.00
             </div>
             <div style={{ color: "green", fontSize: 12 }}>
               ↑ 2.8% Last month
