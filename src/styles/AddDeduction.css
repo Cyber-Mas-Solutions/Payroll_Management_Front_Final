@@ -1,0 +1,120 @@
+/* Full-screen dark overlay background */
+.add-deduction-wrapper {
+  display: flex;
+  width: 100vw;
+  background-color: rgb(233, 233, 233);
+  min-height: 100vh;
+  
+}
+
+.overlay {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* White centered modal card */
+.add-deduction-modal {
+  background-color: #fff;
+  width: 520px;
+  padding: 35px 40px;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.3s ease-in-out;
+  
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Title */
+.add-deduction-modal h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+/* Form layout */
+.add-deduction-form label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #444;
+  margin-top: 12px;
+  margin-bottom: 5px;
+}
+
+.add-deduction-form input,
+.add-deduction-form select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  background-color: #fff;
+  transition: border-color 0.2s ease;
+  color: #444;
+}
+
+.add-deduction-form input:focus,
+.add-deduction-form select:focus {
+  border-color: #4f46e5;
+}
+
+/* Buttons */
+.button-group {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.save-btn,
+.cancel-btn {
+  padding: 8px 18px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Save button (Primary) */
+.save-btn {
+  background-color: #4f46e5;
+  color: #fff;
+}
+
+.save-btn:hover {
+  background-color: #4338ca;
+}
+
+/* Cancel button (Neutral) */
+.cancel-btn {
+  background-color: #e5e7eb;
+  color: #111;
+}
+
+.cancel-btn:hover {
+  background-color: #d1d5db;
+}
+
+/* Center alignment fix for smaller screens */
+@media (max-width: 600px) {
+  .add-deduction-modal {
+    width: 90%;
+    padding: 25px;
+  }
+}

@@ -26,8 +26,12 @@ const TimeManagement = () => {
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
+  // modal state: create/edit
+  const [mode, setMode] = useState("create"); // "create" | "edit"
+  const [editingId, setEditingId] = useState(null);
+
   // form state
-  const [newTimetable, setNewTimetable] = useState({
+  const emptyForm = {
     name: "",
     checkInStart: "",
     checkInEnd: "",
@@ -36,7 +40,9 @@ const TimeManagement = () => {
     checkOutStart: "",
     checkOutEnd: "",
     type: "Roster",
-  });
+  };
+
+  const [newTimetable, setNewTimetable] = useState(emptyForm);
 
   // helpers
   const onInput = (e) => {
@@ -44,7 +50,16 @@ const TimeManagement = () => {
     setNewTimetable((s) => ({ ...s, [name]: value }));
   };
 
-  const hhmmToHhmmss = (t) => (t ? `${t}:00` : ""); // HTML time inputs return "HH:mm"
+  // Convert values safely:
+  // - time input gives "HH:mm"
+  // - API might return "HH:mm:ss"
+  const hhmmToHhmmss = (t) => (t ? `${t}:00` : "");
+  const hhmmssToHhmm = (t) => {
+    if (!t) return "";
+    // handles "HH:mm:ss" or "HH:mm"
+    const parts = String(t).split(":");
+    return parts.length >= 2 ? `${parts[0].padStart(2, "0")}:${parts[1].padStart(2, "0")}` : "";
+  };
 
   // load timetables
   const fetchTimetables = () => {
@@ -54,7 +69,6 @@ const TimeManagement = () => {
       .getTimetables()
       .then((data) => {
         const list = Array.isArray(data) ? data : data?.data || [];
-        // normalize keys for UI
         const mapped = list.map((r) => ({
           id: r.id || r.timetable_id || r.ID,
           name: r.name,
@@ -76,41 +90,112 @@ const TimeManagement = () => {
     fetchTimetables();
   }, []);
 
+  // open create modal
+  const openCreate = () => {
+    setMode("create");
+    setEditingId(null);
+    setNewTimetable(emptyForm);
+    setShowModal(true);
+  };
+
+  // open edit modal (prefill)
+  const openEdit = (t) => {
+    setMode("edit");
+    setEditingId(t.id);
+    setNewTimetable({
+      name: t.name || "",
+      checkInStart: hhmmssToHhmm(t.checkInStart),
+      checkInEnd: hhmmssToHhmm(t.checkInEnd),
+      graceStart: hhmmssToHhmm(t.graceStart),
+      graceEnd: hhmmssToHhmm(t.graceEnd),
+      checkOutStart: hhmmssToHhmm(t.checkOutStart),
+      checkOutEnd: hhmmssToHhmm(t.checkOutEnd),
+      type: t.type || "Roster",
+    });
+    setShowModal(true);
+  };
+
+  // validate required fields
+  const validate = () => {
+    if (
+      !newTimetable.name ||
+      !newTimetable.checkInStart ||
+      !newTimetable.checkInEnd ||
+      !newTimetable.checkOutStart ||
+      !newTimetable.checkOutEnd
+    ) {
+      alert("Please fill in all required fields (*).");
+      return false;
+    }
+    return true;
+  };
+
+  const buildPayload = () => ({
+    name: newTimetable.name,
+    check_in_start: hhmmToHhmmss(newTimetable.checkInStart),
+    check_in_end: hhmmToHhmmss(newTimetable.checkInEnd),
+    grace_start: hhmmToHhmmss(newTimetable.graceStart),
+    grace_end: hhmmToHhmmss(newTimetable.graceEnd),
+    check_out_start: hhmmToHhmmss(newTimetable.checkOutStart),
+    check_out_end: hhmmToHhmmss(newTimetable.checkOutEnd),
+    type: newTimetable.type, // "Roster" | "Fixed"
+  });
+
   // create
   const handleCreateTimetable = async () => {
-    if (!newTimetable.name || !newTimetable.checkInStart || !newTimetable.checkInEnd || !newTimetable.checkOutStart || !newTimetable.checkOutEnd) {
-      alert("Please fill in all required fields (*).");
-      return;
-    }
-
-    const payload = {
-      name: newTimetable.name,
-      check_in_start: hhmmToHhmmss(newTimetable.checkInStart),
-      check_in_end: hhmmToHhmmss(newTimetable.checkInEnd),
-      grace_start: hhmmToHhmmss(newTimetable.graceStart),
-      grace_end: hhmmToHhmmss(newTimetable.graceEnd),
-      check_out_start: hhmmToHhmmss(newTimetable.checkOutStart),
-      check_out_end: hhmmToHhmmss(newTimetable.checkOutEnd),
-      type: newTimetable.type, // "Roster" | "Fixed"
-    };
+    if (!validate()) return;
 
     try {
       setErr("");
-      await attendanceApi.createTimetable(payload);
+      await attendanceApi.createTimetable(buildPayload());
       setShowModal(false);
-      setNewTimetable({
-        name: "",
-        checkInStart: "",
-        checkInEnd: "",
-        graceStart: "",
-        graceEnd: "",
-        checkOutStart: "",
-        checkOutEnd: "",
-        type: "Roster",
-      });
+      setNewTimetable(emptyForm);
       fetchTimetables();
     } catch (e) {
       setErr(e.message || "Failed to create timetable");
+    }
+  };
+
+  // update
+  const handleUpdateTimetable = async () => {
+    if (!editingId) return;
+    if (!validate()) return;
+
+    const payload = buildPayload();
+
+    try {
+      setErr("");
+
+      // 1) call backend
+      // IMPORTANT: adjust this function name to your API implementation
+      await attendanceApi.updateTimetable(editingId, payload);
+
+      // 2) update table immediately (optimistic UI)
+      setTimetables((prev) =>
+        prev.map((x) =>
+          x.id === editingId
+            ? {
+                ...x,
+                name: payload.name,
+                checkInStart: payload.check_in_start,
+                checkInEnd: payload.check_in_end,
+                graceStart: payload.grace_start,
+                graceEnd: payload.grace_end,
+                checkOutStart: payload.check_out_start,
+                checkOutEnd: payload.check_out_end,
+                type: payload.type,
+              }
+            : x
+        )
+      );
+
+      // 3) close + refresh to ensure synced with backend
+      setShowModal(false);
+      setEditingId(null);
+      setNewTimetable(emptyForm);
+      fetchTimetables();
+    } catch (e) {
+      setErr(e.message || "Failed to update timetable");
     }
   };
 
@@ -139,13 +224,13 @@ const TimeManagement = () => {
       <PageHeader breadcrumb={["Time & Attendance", "Time Management"]} title="Timetable Management" />
 
       {/* Tabs */}
-      <div className="card" style={{ display: "flex", gap: 8, overflowX: "auto", whiteSpace: "nowrap" }}>
+      <div className="card" style={{ display: "flex", gap: 8, overflowX: "auto", whiteSpace: "nowrap", flexWrap: "wrap" }}>
         {tabs.map((tab) => (
           <button
             key={tab.path}
             className={`btn ${location.pathname === tab.path ? "btn-primary" : "btn-soft"}`}
             onClick={() => navigate(tab.path)}
-            style={{ whiteSpace: "nowrap", flexShrink: 0 }}
+            style={{ whiteSpace: "nowrap" }}
           >
             {tab.label}
           </button>
@@ -154,8 +239,8 @@ const TimeManagement = () => {
 
       {/* Search + create */}
       <div className="card">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end" }}>
-          <div style={{ flex: 1, maxWidth: 400 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", gap: 12, flexWrap: "wrap" }}>
+          <div style={{ flex: 1, minWidth: 260, maxWidth: 420 }}>
             <label className="muted-label">Search</label>
             <div style={{ display: "flex", gap: 8 }}>
               <input
@@ -166,14 +251,14 @@ const TimeManagement = () => {
                 style={{ flex: 1 }}
               />
               {searchTerm && (
-                <button className="btn btn-soft" onClick={clearSearch}>
+                <button className="btn btn-soft" onClick={clearSearch} style={{ whiteSpace: "nowrap" }}>
                   Clear
                 </button>
               )}
             </div>
           </div>
 
-          <button className="btn btn-primary" onClick={() => setShowModal(true)} style={{ whiteSpace: "nowrap" }}>
+          <button className="btn btn-primary" onClick={openCreate} style={{ whiteSpace: "nowrap" }}>
             + Create Timetable
           </button>
         </div>
@@ -184,7 +269,11 @@ const TimeManagement = () => {
       </div>
 
       {/* error */}
-      {err && <div className="card" style={{ color: "var(--danger)" }}>{err}</div>}
+      {err && (
+        <div className="card" style={{ color: "var(--danger)" }}>
+          {err}
+        </div>
+      )}
 
       {/* table */}
       <div className="table-container">
@@ -196,6 +285,8 @@ const TimeManagement = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: 8,
             }}
           >
             <div style={{ fontWeight: 700 }}>Timetables</div>
@@ -204,8 +295,8 @@ const TimeManagement = () => {
             </div>
           </div>
 
-          <div style={{ overflowX: "auto", flex: 1 }}>
-            <table className="table">
+          <div style={{ overflowX: "auto" }}>
+            <table className="table" style={{ minWidth: 980 }}>
               <thead>
                 <tr>
                   <th>Timetable Name</th>
@@ -214,12 +305,16 @@ const TimeManagement = () => {
                   <th>Start Check-out Time</th>
                   <th>End Check-out Time</th>
                   <th>Type</th>
-                  <th>Actions</th>
+                  <th style={{ width: 160 }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan="7" style={{ textAlign: "center", padding: 40 }}>Loading…</td></tr>
+                  <tr>
+                    <td colSpan="7" style={{ textAlign: "center", padding: 40 }}>
+                      Loading…
+                    </td>
+                  </tr>
                 ) : filteredTimetables.length ? (
                   filteredTimetables.map((t) => (
                     <tr key={t.id || t.name}>
@@ -230,8 +325,13 @@ const TimeManagement = () => {
                       <td>{t.checkOutEnd || "—"}</td>
                       <td>{t.type || "—"}</td>
                       <td>
-                        <div style={{ display: "flex", gap: 8 }}>
-                          <button className="btn btn-soft" style={{ fontSize: 12, padding: "4px 8px" }} disabled>
+                        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                          <button
+                            className="btn btn-soft"
+                            style={{ fontSize: 12, padding: "4px 8px" }}
+                            onClick={() => openEdit(t)}
+                            disabled={!t.id}
+                          >
                             Edit
                           </button>
                           <button
@@ -270,13 +370,14 @@ const TimeManagement = () => {
             alignItems: "center",
             justifyContent: "center",
             zIndex: 1000,
+            padding: 12,
           }}
         >
           <div
             style={{
               background: "var(--panel)",
               borderRadius: 8,
-              width: "90%",
+              width: "100%",
               maxWidth: 800,
               maxHeight: "90vh",
               overflow: "auto",
@@ -291,7 +392,9 @@ const TimeManagement = () => {
                 justifyContent: "space-between",
               }}
             >
-              <h2 style={{ fontSize: 18, fontWeight: 600, margin: 0 }}>Create Timetable</h2>
+              <h2 style={{ fontSize: 18, fontWeight: 600, margin: 0 }}>
+                {mode === "edit" ? "Edit Timetable" : "Create Timetable"}
+              </h2>
               <button
                 onClick={() => setShowModal(false)}
                 style={{ background: "none", border: "none", fontSize: 20, cursor: "pointer", color: "var(--muted)" }}
@@ -358,11 +461,20 @@ const TimeManagement = () => {
                 </div>
               </div>
 
-              {/* (Optional) Assign employees UI can be hooked later */}
+              <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", flexWrap: "wrap" }}>
+                <button className="btn btn-soft" onClick={() => setShowModal(false)}>
+                  Cancel
+                </button>
 
-              <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-                <button className="btn btn-soft" onClick={() => setShowModal(false)}>Cancel</button>
-                <button className="btn btn-primary" onClick={handleCreateTimetable}>Confirm</button>
+                {mode === "edit" ? (
+                  <button className="btn btn-primary" onClick={handleUpdateTimetable}>
+                    Update
+                  </button>
+                ) : (
+                  <button className="btn btn-primary" onClick={handleCreateTimetable}>
+                    Confirm
+                  </button>
+                )}
               </div>
             </div>
           </div>

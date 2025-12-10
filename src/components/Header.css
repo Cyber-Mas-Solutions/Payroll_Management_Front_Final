@@ -1,0 +1,61 @@
+/* src/styles/Header.css */
+
+.app-header {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 12px 24px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/* Notification icon */
+.notification-icon {
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.notification-icon:hover {
+  transform: scale(1.2);
+}
+
+/* User profile section */
+.user-profile {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 10px;
+  position: relative;
+}
+
+.user-avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background-color: #ddd;
+  background-size: cover;
+  background-position: center;
+}
+
+.username {
+  font-weight: 500;
+  font-size: 15px;
+  color: #333;
+}
+
+.dropdown-arrow {
+  font-size: 12px;
+  color: #555;
+}

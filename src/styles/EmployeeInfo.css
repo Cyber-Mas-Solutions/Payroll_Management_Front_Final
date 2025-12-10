@@ -1,0 +1,428 @@
+
+.employee-info-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
+}
+
+.employee-info-content {
+  flex: 1;
+  margin-left: 210px;
+  width: calc(100vw - 210px);
+  min-height: 100vh;
+  overflow-x: auto;
+  background-color: #f8f9fa;
+}
+
+/* ============================
+   Header Section
+============================ */
+.employee-info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px 24px;
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.header-left .breadcrumb {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.breadcrumb-separator {
+  margin: 0 8px;
+}
+
+.breadcrumb-item.active {
+  color: #333;
+  font-weight: 500;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+
+/* ============================
+   Overview Tabs
+============================ */
+.overview-section {
+  margin-bottom: 25px;
+  background: white;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.overview-section h2 {
+  padding: 16px 24px 0;
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+  font-weight: 600;
+}
+
+.overview-items {
+  display: flex;
+  padding: 0 24px;
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+  overflow-x: auto;
+  margin-top: 12px;
+}
+
+.overview-item {
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #6b7280;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.overview-item:hover {
+  color: #3b82f6;
+  background-color: #f9fafb;
+}
+
+.overview-item.active {
+  border-bottom-color: #3b82f6;
+  color: #3b82f6;
+  font-weight: 500;
+}
+
+/* ============================
+   Section Styles
+============================ */
+.section {
+  margin-bottom: 25px;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.section h2 {
+  margin: 0 0 15px 0;
+  font-size: 18px;
+  color: #333;
+}
+
+/* ============================
+   Employee Table
+============================ */
+.employee-table-section {
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  color: #333;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.add-employee-btn {
+  padding: 8px 16px;
+  background-color: #4361ee;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.add-employee-btn:hover {
+  background-color: #3a56d4;
+}
+
+.employee-table-container {
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+.employee-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.employee-table th {
+  background-color: #f8f9fa;
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #e9ecef;
+  font-size: 14px;
+}
+
+.employee-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 14px;
+}
+
+.employee-table tr:hover {
+  background-color: #f8f9fa;
+}
+
+.employee-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.employee-avatar-small {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #ddd;
+}
+
+/* ============================
+   Status Badges
+============================ */
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.full-time {
+  background-color: #e7f4e4;
+  color: #2e7d32;
+}
+
+.status-badge.part-time {
+  background-color: #fff3e0;
+  color: #ef6c00;
+}
+
+.status-badge.on-contract {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.status-badge.seasonal {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+/* ============================
+   Action Buttons (View / Edit)
+============================ */
+.action-buttons {
+  display: flex;
+  flex-direction: row; /* Always horizontal */
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+/* View Button */
+.action-btn.view-btn {
+  background-color: #0f4fb6;
+  color: white;
+}
+
+.action-btn.view-btn:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* Edit Button */
+.action-btn.edit-btn {
+  background-color: #099734;
+  color: white;
+}
+
+.action-btn.edit-btn:hover {
+  background-color: #059669;
+  transform: translateY(-1px);
+}
+
+/* ============================
+   Export Button
+============================ */
+.export-btn {
+  padding: 8px 16px;
+  background-color: white;
+  color: black;
+  border: 1px solid #919090;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.export-btn:hover {
+  background-color: #e6e6e6;
+}
+
+/* ============================
+   Pagination
+============================ */
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+  justify-content: center;
+  color: rgb(46, 46, 46);
+}
+
+.pagination-btn {
+  padding: 6px 12px;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pagination-info input {
+  width: 40px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px;
+}
+
+/* ============================
+   Search & Filters
+============================ */
+.search-filter-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+/* Give all filter inputs consistent height and style */
+.search-input,
+.filter-select,
+.filter-date {
+  height: 38px; /* consistent height */
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #f8f9fa;
+  color: #333;
+  box-sizing: border-box;
+  flex: 1; /* equal width for all */
+  min-width: 160px; /* prevent being too small */
+}
+
+/* Make all select and date inputs same width */
+.filter-select,
+.filter-date {
+  flex: 1;
+  min-width: 160px;
+}
+
+/* Keep search bar visually similar in size */
+.search-input {
+  flex: 1;
+}
+
+/* Optional: nice hover/focus styling */
+.search-input:focus,
+.filter-select:focus,
+.filter-date:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: #fff;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* ============================
+   Responsive Design
+============================ */
+@media (max-width: 992px) {
+  .employee-info-content {
+    margin-left: 0;
+    padding: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .employee-info-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .header-right {
+    align-self: flex-end;
+  }
+
+  .employee-table {
+    font-size: 12px;
+  }
+
+  /* Keep buttons horizontal even on mobile */
+  .action-buttons {
+    flex-direction: row;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+  }
+}

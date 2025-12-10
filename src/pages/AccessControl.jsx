@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 
-
 const AccessControl = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -24,8 +23,6 @@ const AccessControl = () => {
     { name: "Edit Employee Data", hr: false, finance: true, employee: false, auditor: false },
     { name: "Approve Payroll", hr: true, finance: true, employee: false, auditor: false },
     { name: "Delete Records", hr: true, finance: false, employee: false, auditor: false },
-    { name: "Manage User Accounts", hr: true, finance: false, employee: false, auditor: false },
-    { name: "Export Data", hr: true, finance: false, employee: false, auditor: true },
   ]);
 
   const [roles, setRoles] = useState([
@@ -35,10 +32,12 @@ const AccessControl = () => {
     { name: "Auditor", desc: "Read-only access to all system data for audit purposes" },
   ]);
 
+  // Modal States
   const [showPermissionModal, setShowPermissionModal] = useState(false);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
+
   const [newPermission, setNewPermission] = useState({
     name: "",
     hr: false,
@@ -46,24 +45,20 @@ const AccessControl = () => {
     employee: false,
     auditor: false,
   });
+
   const [newRole, setNewRole] = useState({ name: "", desc: "" });
 
+  // Toggle switch handler
   const handleToggle = (permIndex, role) => {
     const updated = [...permissions];
     updated[permIndex][role] = !updated[permIndex][role];
     setPermissions(updated);
   };
 
+  // Save changes handler
   const handleSave = () => alert("Changes saved successfully!");
 
-  const handleAddPermission = (e) => {
-    e.preventDefault();
-    if (!newPermission.name.trim()) return alert("Enter permission name");
-    setPermissions([...permissions, newPermission]);
-    setNewPermission({ name: "", hr: false, finance: false, employee: false, auditor: false });
-    setShowPermissionModal(false);
-  };
-
+  // Add or Edit Role
   const handleAddOrEditRole = (e) => {
     e.preventDefault();
     if (!newRole.name.trim() || !newRole.desc.trim()) return alert("Please fill in all fields.");
@@ -73,9 +68,10 @@ const AccessControl = () => {
     else updated.push(newRole);
 
     setRoles(updated);
-    setNewRole({ name: "", desc: "" });
     setShowRoleModal(false);
     setIsEditing(false);
+    setEditIndex(null);
+    setNewRole({ name: "", desc: "" });
   };
 
   const handleEditRole = (i) => {
@@ -91,6 +87,15 @@ const AccessControl = () => {
     }
   };
 
+  // Add Permission
+  const handleAddPermission = (e) => {
+    e.preventDefault();
+    if (!newPermission.name.trim()) return alert("Enter permission name");
+    setPermissions([...permissions, newPermission]);
+    setNewPermission({ name: "", hr: false, finance: false, employee: false, auditor: false });
+    setShowPermissionModal(false);
+  };
+
   return (
     <div className="app-shell">
       <div className="app-sidebar">
@@ -102,7 +107,7 @@ const AccessControl = () => {
         </div>
 
         <div className="app-content">
-          {/* Page Header */}
+          {/* Header */}
           <div className="page-header">
             <div className="breadcrumb">
               <span className="breadcrumb-item">Administration</span>
@@ -126,7 +131,7 @@ const AccessControl = () => {
             ))}
           </div>
 
-          {/* Permission Matrix */}
+          {/* Permissions Table */}
           <div className="card">
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px" }}>
               <div>
@@ -155,11 +160,7 @@ const AccessControl = () => {
                     {["hr", "finance", "employee", "auditor"].map((role) => (
                       <td key={role} style={{ textAlign: "center" }}>
                         <label className="switch small">
-                          <input
-                            type="checkbox"
-                            checked={p[role]}
-                            onChange={() => handleToggle(i, role)}
-                          />
+                          <input type="checkbox" checked={p[role]} onChange={() => handleToggle(i, role)} />
                           <span className="slider"></span>
                         </label>
                       </td>
@@ -176,7 +177,7 @@ const AccessControl = () => {
             </div>
           </div>
 
-          {/* Role Management */}
+          {/* Role Management Section */}
           <div className="card">
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px" }}>
               <div>
@@ -215,7 +216,7 @@ const AccessControl = () => {
             ))}
           </div>
 
-          {/* === Add Permission Modal === */}
+          {/* --- Add Permission Modal --- */}
           {showPermissionModal && (
             <div className="modal-overlay">
               <div className="modal-content">
@@ -239,9 +240,7 @@ const AccessControl = () => {
                           <input
                             type="checkbox"
                             checked={newPermission[r]}
-                            onChange={() =>
-                              setNewPermission({ ...newPermission, [r]: !newPermission[r] })
-                            }
+                            onChange={() => setNewPermission({ ...newPermission, [r]: !newPermission[r] })}
                           />{" "}
                           {r.toUpperCase()}
                         </label>
@@ -262,7 +261,7 @@ const AccessControl = () => {
             </div>
           )}
 
-          {/* === Add/Edit Role Modal === */}
+          {/* --- Add/Edit Role Modal --- */}
           {showRoleModal && (
             <div className="modal-overlay">
               <div className="modal-content">
