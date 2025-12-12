@@ -1,131 +1,107 @@
-// src/pages/AuditLogs.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Layout from "../components/Layout";
 import PageHeader from "../components/PageHeader";
+import { apiGetWithParams } from "../services/api";
+import Spineer from "../components/Spineer";
+import AuditLogViewModal from "./AuditLogViewModal";
+
+const format = (d) => d.toISOString().slice(0, 10);
 
 export default function AuditLogs() {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
+  const [loading, setLoading] = useState(true);
+  const [auditlogs, setAuditlogs] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [search, setSearch] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedAuditId, setSelectedAuditId] = useState(null);
 
-  const auditData = [
-    { 
-      id: 1, 
-      time: "2023-10-15 09:23:45", 
-      event: "Employee Created", 
-      user: "HR Admin (admin@company.com)", 
-      description: "Created new employee record for John Doe (EMPO01)", 
-      module: "Employee" 
-    },
-    { 
-      id: 2, 
-      time: "2023-10-15 10:45:12", 
-      event: "Document Uploaded", 
-      user: "HR Admin (admin@company.com)", 
-      description: "Uploaded Employment Contract for John Doe (EMPO01)", 
-      module: "Document" 
-    },
-    { 
-      id: 3, 
-      time: "2023-10-16 11:32:08", 
-      event: "Leave Approved", 
-      user: "Michael Wilson (manager@company.com)", 
-      description: "Approved annual leave request for Jane Smith (EMPO02)", 
-      module: "Leave Management" 
-    },
-    { 
-      id: 4, 
-      time: "2023-10-17 14:15:30", 
-      event: "Performance Review Added", 
-      user: "Michael Wilson (manager@company.com)", 
-      description: "Added performance review for Robert Johnson (EMPO03)", 
-      module: "Performance" 
-    },
-    { 
-      id: 5, 
-      time: "2023-10-18 08:45:22", 
-      event: "Employee Updated", 
-      user: "HR Admin (admin@company.com)", 
-      description: "Updated contact information for Emily Davis (EMPO04)", 
-      module: "Employee" 
-    },
-    { 
-      id: 6, 
-      time: "2023-10-18 16:30:05", 
-      event: "Document Deleted", 
-      user: "HR Admin (admin@company.com)", 
-      description: "Deleted outdated contract for Emily Davis (EMPO04)", 
-      module: "Documents" 
-    },
-    { 
-      id: 7, 
-      time: "2023-10-19 10:05:18", 
-      event: "Failed Login Attempt", 
-      user: "Unknown", 
-      description: "Multiple failed login attempts from unrecognized IP", 
-      module: "Security" 
+
+  // Set last 7 days as default date range for audit logs to optimize backend performance
+  useEffect(() => {
+    const today = new Date();
+    const lastWeek = new Date();
+    lastWeek.setDate(today.getDate() - 7);
+
+    setStartDate(format(lastWeek));
+    setEndDate(format(today));
+  }, []);
+
+  // Fetch audit logs when date range is set, then only backend works
+  useEffect(() => {
+    if (!startDate || !endDate) return;
+    fetchAuditLogs();
+  }, [startDate, endDate]);
+
+  const fetchAuditLogs = async () => {
+    setLoading(true);
+    try {
+      const params = { start: startDate, end: endDate };
+      const res = await apiGetWithParams("/auditlogs", params);
+      const data = Array.isArray(res.data) ? res.data : [];
+      setAuditlogs(data);
+
+      setFiltered(data);
+    } catch (err) {
+      console.error(err);
+      setAuditlogs([]);
+      setFiltered([]);
+    } finally {
+      setLoading(false);
     }
-  ];
-
-  // Format datetime
-  const formatDateTime = (dateTimeString) => {
-    const date = new Date(dateTimeString);
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const year = date.getFullYear();
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    const seconds = String(date.getSeconds()).padStart(2, "0");
-    return `${month}/${day}/${year} ${hours}:${minutes}:${seconds}`;
   };
+      console.log(auditlogs)
+  // Filtering
+  useEffect(() => {
+    let data = [...auditlogs];
 
-  // Filtered data
-  const filteredData = auditData.filter((item) => {
-    const itemDate = new Date(item.time);
+    if (search.trim() !== "") {
+      const q = search.toLowerCase();
+      data = data.filter(
+        (x) =>
+          x.action_type.toLowerCase().includes(q) ||
+          x.name.toLowerCase().includes(q) ||
+          x.email.toLowerCase().includes(q) ||
+          x.target_table.toLowerCase().includes(q)
+      );
+    }
 
-    const matchesStartDate = startDate ? itemDate >= new Date(startDate) : true;
-    const matchesEndDate = endDate ? itemDate <= new Date(endDate) : true;
+    setFiltered(data);
+  }, [search, auditlogs]);
 
-    const matchesSearch = searchTerm
-      ? item.event.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.module.toLowerCase().includes(searchTerm.toLowerCase())
-      : true;
-
-    return matchesStartDate && matchesEndDate && matchesSearch;
-  });
-
-  const handleClearFilters = () => {
-    setStartDate("");
-    setEndDate("");
-    setSearchTerm("");
+  const clearFilters = () => {
+    setSearch("");
+    const today = new Date();
+    const lastWeek = new Date();
+    lastWeek.setDate(today.getDate() - 7);
+    setStartDate(format(lastWeek));
+    setEndDate(format(today));
   };
 
   return (
     <Layout>
-      {/* Fixed Header Section */}
       <PageHeader
         breadcrumb={["Employee Information", "Audit Logs"]}
         title="Employee Information Management"
       />
 
       {/* Fixed Tabs Section */}
-      <div style={{ 
-        position: 'sticky', 
-        top: 0, 
-        zIndex: 100, 
+      <div style={{
+        position: 'sticky',
+        top: 0,
         backgroundColor: 'var(--bg)',
         borderBottom: '1px solid var(--border)'
       }}>
-        <div className="card" style={{ 
-          display: "flex", 
-          gap: "8px", 
-          overflowX: "auto", 
+        <div className="card" style={{
+          display: "flex",
+          gap: "8px",
+          overflowX: "auto",
           whiteSpace: "nowrap",
           marginBottom: 0,
           borderRadius: '0'
@@ -187,90 +163,109 @@ export default function AuditLogs() {
                 className="input"
                 type="text"
                 placeholder="Search events, users, descriptions..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
               />
             </div>
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div style={{ display: "flex", gap: "8px" }}>
-              {(startDate || endDate || searchTerm) && (
-                <button className="btn btn-soft" onClick={handleClearFilters}>
+              {(startDate || endDate || search) && (
+                <button className="btn btn-soft" onClick={clearFilters}>
                   Clear Filters
                 </button>
               )}
             </div>
             <div style={{ fontSize: "12px", color: "var(--muted)" }}>
-              {filteredData.length} audit record(s)
+              {filtered.length} audit record(s)
             </div>
           </div>
         </div>
 
-        {/* Audit Logs Table Section */}
-        <div className="table-container">
-          <div className="card" style={{ padding: 0 }}>
-            <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center" }}>
-              <div style={{ fontWeight: "700" }}>Audit Logs</div>
-              <div style={{ marginLeft: "auto", fontSize: "12px", color: "var(--muted)" }}>
-                Showing {filteredData.length} of {auditData.length} records
+        {/* Table */}
+        {loading ? (
+          <Spineer />
+        ) : (
+          <div className="table-container">
+            <div className="card" style={{ padding: 0 }}>
+              <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center" }}>
+                <div style={{ fontWeight: "700" }}>Audit Logs</div>
+                <div style={{ marginLeft: "auto", fontSize: "12px", color: "var(--muted)" }}>
+                  Showing {filtered.length} of {auditlogs.length} records
+                </div>
+              </div>
+
+              <div style={{ overflowX: "auto", flex: 1 }}>
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Time</th>
+                      <th>Event</th>
+                      <th>Status</th>
+                      <th>User</th>
+                      <th>Description</th>
+                      <th></th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filtered.map((row) => (
+                      <tr key={row.audit_id}>
+                        <td>{new Date(row.action_time).toLocaleString()}</td>
+                        <td>{row.action_type}</td>
+                        <td><span style={{
+                          padding: '4px',
+                          borderRadius: '4px',
+                          border: '1px solid #ccc'
+                        }}
+                          className={
+                            row.status?.toLowerCase() === "success"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                          }
+                        >{row.status}</span></td>
+                        <td>{row.name}<br />{row.email}</td>
+                        <td>Table: {row.target_table}<br />ID: {row.target_id}</td>
+                        <td>
+                          <button
+                            className="btn btn-soft"
+                            onClick={() => {
+                              setSelectedAuditId(row.audit_id);
+                              setModalOpen(true);
+                            }}
+                          >
+                            View
+                          </button>
+                        </td>
+
+                      </tr>
+                    ))}
+
+                    {!filtered.length && (
+                      <tr>
+                        <td colSpan="5" style={{ textAlign: "center", padding: "20px" }}>
+                          No audit records found matching your criteria.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
-
-            <div style={{ overflowX: "auto", flex: 1 }}>
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Time</th>
-                    <th>Event</th>
-                    <th>User</th>
-                    <th>Description</th>
-                    <th>Module</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredData.map((item) => (
-                    <tr key={item.id}>
-                      <td style={{ fontSize: "11px", color: "var(--muted)", whiteSpace: "nowrap" }}>
-                        {formatDateTime(item.time)}
-                      </td>
-                      <td>
-                        <span style={{ fontWeight: "600" }}>{item.event}</span>
-                      </td>
-                      <td>
-                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                          <div className="user-avatar" />
-                          <div>
-                            <div style={{ fontWeight: "600", fontSize: "12px" }}>
-                              {item.user.split(" (")[0]}
-                            </div>
-                            <div style={{ fontSize: "11px", color: "var(--muted)" }}>
-                              {item.user.includes("(") ? item.user.split("(")[1].replace(")", "") : ""}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td style={{ fontSize: "12px", lineHeight: "1.4" }}>{item.description}</td>
-                      <td>
-                        <span className="pill" style={{ background: "var(--soft)", color: "var(--text)" }}>
-                          {item.module}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                  {!filteredData.length && (
-                    <tr>
-                      <td colSpan="5" style={{ textAlign: "center", padding: "20px" }}>
-                        No audit records found matching your criteria.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
           </div>
-        </div>
+        )}
       </div>
+
+
+      <AuditLogViewModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        auditId={selectedAuditId}
+      />
+
+
     </Layout>
   );
 }
