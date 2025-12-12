@@ -36,6 +36,7 @@ import LeaveRequest from "./pages/LeaveRequest";
 import LeaveRules from "./pages/LeaveRules";
 
 
+
 import SecurityAccessControl from "./pages/SecurityAccessControl";
 import UserManagement from "./pages/UserManagement";
 import RoleManagement from "./pages/RoleManagement";
@@ -60,6 +61,14 @@ import DepartmentsPage from "./pages/Administration/AdminstrationDepartment/Depa
 import ShiftsPage from "./pages/Administration/AdministrativeShifts/ShiftsPage";
 import HolidaysPage from "./pages/Administration/AdminsitrationHolidays/HolidaysPage";
 import AnnouncementsPage from "./pages/Administration/AdministrativeAnnouncements/AnnouncementsPage";
+
+//payroll processing 
+
+import Payroll from "./pages/Payroll";
+import ProcessPayroll from "./pages/ProcessPayroll";
+import LoadEmployeeData from "./pages/LoadEmployeeData";
+import GeneratePaySlip from "./pages/GeneratePaySlip";
+
 
 function App() {
   return (
@@ -136,6 +145,14 @@ function App() {
       <Route path="/leave-calendar" element={<LeaveCalendar/>} />
       <Route path="/leave-request" element={<LeaveRequest/>} />
       <Route path="/leave-rules" element={<LeaveRules/>} />
+
+
+      {/* payroll processing */}
+      <Route path="/payroll-processing" element={<Payroll/>} />
+      <Route path="/process-payroll" element={<ProcessPayroll />} />
+      <Route path="/process-payroll/load-data" element={<LoadEmployeeData />} />
+      <Route path="/generate-pay-slip" element={<GeneratePaySlip />} />
+
 
 
       <Route path="/security-access-control" element={<SecurityAccessControl/>} />
