@@ -48,7 +48,7 @@ const TimeManagement = () => {
 
   // load timetables
   const fetchTimetables = () => {
-    setLoading(true);
+    setLoading(true); 
     setErr("");
     attendanceApi
       .getTimetables()
