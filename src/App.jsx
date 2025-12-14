@@ -70,10 +70,7 @@ import AnnouncementsPage from "./pages/Administration/AdministrativeAnnouncement
 
 //payroll processing 
 
-import Payroll from "./pages/Payroll";
-import ProcessPayroll from "./pages/ProcessPayroll";
-import LoadEmployeeData from "./pages/LoadEmployeeData";
-import GeneratePaySlip from "./pages/GeneratePaySlip";
+
 
 
 function App() {
