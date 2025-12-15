@@ -36,6 +36,7 @@ import LeaveRequest from "./pages/LeaveRequest";
 import LeaveRules from "./pages/LeaveRules";
 
 
+
 import SecurityAccessControl from "./pages/SecurityAccessControl";
 import UserManagement from "./pages/UserManagement";
 import RoleManagement from "./pages/RoleManagement";
@@ -51,6 +52,12 @@ import CostCenterAnalysisPage from "./pages/Reports/CostCenterAnalysisPage/CostC
 import CompensateTrendsPage from "./pages/Reports/CompentsationTrendsPage/CompensateTrendsPage";
 import ForecastingPage from "./pages/Reports/ForecastingPage/ForecastingPage";
 
+import Payroll from "./pages/Payroll Processing/Payroll";
+import ProcessPayroll from "./pages/Payroll Processing/ProcessPayroll";
+import LoadEmployeeData from "./pages/Payroll Processing/LoadEmployeeData";
+import GeneratePaySlip from "./pages/Payroll Processing/GeneratePaySlip";
+import EmployeeSalaryDetails from "./pages/Payroll Processing/EmployeeSalaryDetails";
+
 import ETFEPF from "./pages/ETFEPF";
 import EtfEpfProcess from "./pages/EtfEpfProcess";
 import UnpaidLeaves from "./pages/UnpaidLeaves";
@@ -60,6 +67,11 @@ import DepartmentsPage from "./pages/Administration/AdminstrationDepartment/Depa
 import ShiftsPage from "./pages/Administration/AdministrativeShifts/ShiftsPage";
 import HolidaysPage from "./pages/Administration/AdminsitrationHolidays/HolidaysPage";
 import AnnouncementsPage from "./pages/Administration/AdministrativeAnnouncements/AnnouncementsPage";
+
+//payroll processing 
+
+
+
 
 function App() {
   return (
@@ -138,6 +150,14 @@ function App() {
       <Route path="/leave-rules" element={<LeaveRules/>} />
 
 
+      {/* payroll processing */}
+      <Route path="/payroll-processing" element={<Payroll/>} />
+      <Route path="/process-payroll" element={<ProcessPayroll />} />
+      <Route path="/process-payroll/load-data" element={<LoadEmployeeData />} />
+      <Route path="/generate-pay-slip" element={<GeneratePaySlip />} />
+
+
+
       <Route path="/security-access-control" element={<SecurityAccessControl/>} />
       <Route path="/user-management" element={<UserManagement/>} />
       <Route path="/role-management" element={<RoleManagement/>} />
@@ -146,6 +166,14 @@ function App() {
       <Route path="/edit-user" element={<EditUser/>} />
       <Route path="/audit-log" element={<AuditLog/>} />
       <Route path="/audit-log/:id" element={<AuditLogDetails />} />
+
+      
+      <Route path="/payroll-processing" element={<Payroll/>} />
+      <Route path="/process-payroll" element={<ProcessPayroll />} />
+      <Route path="/process-payroll/load-data" element={<LoadEmployeeData />} />
+      <Route path="/generate-pay-slip" element={<GeneratePaySlip />} />
+      <Route path="/employee-salary-details" element={<EmployeeSalaryDetails />} />
+
 
 
 

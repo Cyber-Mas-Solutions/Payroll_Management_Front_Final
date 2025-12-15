@@ -7,10 +7,9 @@ import { leaveApi, apiDelete, apiGet } from "../services/api";
 
 const LEAVE_TYPE_OPTIONS = [
   { id: 1, name: "Personal", label: "Personal (Annual)" },
-  { id: 2, name: "Sick", label: "Sick" },
-  { id: 5, name: "Unpaid", label: "Unpaid" },
-  { id: 6, name: "Medical", label: "Medical" },
-  { id: 7, name: "Bereavement", label: "Bereavement" },
+  { id: 2, name: "Sick", label: "Sick (medical" },
+  { id: 8, name: "Maternity", label: "Maternity Leave (4 Months)" }, // Assuming ID 8 for Maternity
+ 
 ];
 
 const LeaveRequest = () => {
@@ -82,14 +81,17 @@ const LeaveRequest = () => {
         appliedDate: (r.created_at || r.applied_date || "").slice(0, 10),
         requestedDate: (r.start_date || "").slice(0, 10),
         category: r.leave_type || r.category || "Leave",
-        // rough guess: half-day if <= 4h; full-day otherwise
+
+        // rough guess: half-day if <= 4.5h; full-day otherwise
+        // 💡 FIX: Half-day logic for display. Full day = 9 hrs, Half day = 4 hrs.
         dayType:
           r.day_type ||
           (r.duration_hours != null
-            ? r.duration_hours <= 4
-              ? "Half Day"
-              : "Full Day"
-            : "Full Day"),
+            ? Number(r.duration_hours) <= 4.5 
+              ? "Half Day (4 hrs)"
+              : "Full Day (9 hrs)"
+            : "Full Day (9 hrs)"),
+            
         reason: r.reason || "",
         status: r.status || "PENDING", // PENDING / APPROVED / REJECTED / CANCELLED
       }));
@@ -353,12 +355,32 @@ const LeaveRequest = () => {
       setCreateLoading(true);
       setError("");
 
+      let duration_hours = null;
+      let endDate = newReq.endDate || newReq.startDate;
+
+      if (newReq.dayType === "Full Day") {
+        // We rely on the backend to calculate multi-day duration, 
+        // but for single days, we explicitly set 9 hours.
+        if (newReq.startDate === endDate) {
+          duration_hours = 9.0;
+        } else {
+          // Pass null and let backend compute based on date range (using 9hr standard)
+          duration_hours = null; 
+        }
+      } else if (newReq.dayType === "Half Day") {
+        // 💡 FIXED: Half day is explicitly 4 hours and must be a single day.
+        duration_hours = 4.0; 
+        endDate = newReq.startDate; // Enforce single day for half day
+      }
+
       const body = {
         employee_id: Number(newReq.employeeId),
         leave_type_id: Number(newReq.leaveTypeId),
         start_date: newReq.startDate,
-        end_date: newReq.endDate || newReq.startDate,
+        end_date: endDate,
         reason: newReq.reason || null,
+        // Pass the explicit duration. Backend uses this value.
+        duration_hours: duration_hours, 
       };
 
       const res = await leaveApi.createRequest(body);
@@ -955,8 +977,8 @@ const LeaveRequest = () => {
                         handleCreateChange("dayType", e.target.value)
                       }
                     >
-                      <option>Full Day</option>
-                      <option>Half Day</option>
+                      <option value="Full Day">Full Day (9 Hours)</option>
+                      <option value="Half Day">Half Day (4 Hours / 0.5 Days)</option> {/* 💡 Clarified */}
                     </select>
                   </div>
                 </div>
