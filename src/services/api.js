@@ -266,5 +266,24 @@ export const etfEpfApi = {
   
 };
 
+// 💡 NEW: Unpaid Leaves API definition
+export const unpaidLeavesApi = {
+    // Used by UnpaidLeaves.jsx for table data (List)
+    list: () => apiGet('/salary/unpaid-leaves'),
+    
+    // Used by the "Add Unpaid Leave" modal (Create)
+    create: (data) => apiPost('/salary/unpaid-leaves', data),
+    
+    // Used by the "Edit" function (Update)
+    update: (id, data) => apiPut(`/salary/unpaid-leaves/${id}`, data),
+    
+    // Used by the "Delete" button (Delete)
+    del: (id) => apiDelete(`/salary/unpaid-leaves/${id}`),
+
+    // Used by the "Process" button (Deduction calculation trigger)
+    processDeduction: (id, data) => apiPost(`/salary/unpaid-leaves/${id}/process`, data || {}),
+};
+
+
 
 
