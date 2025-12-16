@@ -1,16 +1,21 @@
-// src/pages/ProcessPayroll.jsx
-import React, { useState } from "react";
+// src/pages/ConfirmProcessing.jsx
+import React from "react";
 import Layout from "../../components/Layout";
 import PageHeader from "../../components/PageHeader";
-import { FiCalendar } from "react-icons/fi";
-import { useNavigate } from "react-router-dom"; 
+import { FiCheckCircle, FiClock } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
-const ProcessPayroll = () => {
-    const navigate = useNavigate();  //
-  const [selectedMonth, setSelectedMonth] = useState("April 2025");
 
-  const months = ["April 2025", "June 2025", "July 2025"];
+const ConfirmProcessing = () => {
+  const navigate = useNavigate();
 
+  const finish = () => {
+    navigate("/"); // change this to whatever route you want after finishing
+  };
+
+  const goBack = () => {
+    navigate("/review-salary"); // previous step route
+  };
 
   return (
     <Layout>
@@ -19,7 +24,6 @@ const ProcessPayroll = () => {
         title="Process Payroll"
       />
 
-      {/* MAIN GRID (70% left, 30% right) */}
       <div
         className="grid"
         style={{
@@ -32,15 +36,11 @@ const ProcessPayroll = () => {
         {/* LEFT PANEL */}
         <div>
           <div className="card" style={{ padding: 24 }}>
-            {/* --- Title Text --- */}
-            <h2 style={{ fontSize: 26, fontWeight: 700, marginBottom: 4 }}>
-              
-            </h2>
-            <p style={{ color: "var(--muted)", marginBottom: 24, fontSize: 14 }}>
+            <p style={{ color: "var(--muted)", marginBottom: 24 }}>
               Complete the steps below to process payroll for your employees.
             </p>
 
-            {/* TOP TAB BAR */}
+            {/* STEP TABS */}
             <div
               style={{
                 display: "flex",
@@ -52,80 +52,71 @@ const ProcessPayroll = () => {
                 marginBottom: 24,
               }}
             >
-              <span style={{ color: "#000", borderBottom: "2px solid #000" }}>
-                Select Month
-              </span>
+              <span style={{ color: "var(--muted)" }}>Select Month</span>
               <span style={{ color: "var(--muted)" }}>Load Employee Data</span>
               <span style={{ color: "var(--muted)" }}>
                 Review Salary Calculations
               </span>
-              <span style={{ color: "var(--muted)" }}>Confirm Processing</span>
+              <span style={{ color: "#000", borderBottom: "2px solid #000" }}>
+                Confirm Processing
+              </span>
             </div>
 
-            {/* INNER CARD */}
-            <div className="card" style={{ padding: 24, margin: 0 }}>
-              <h3
+            {/* MAIN CONFIRM CONTENT */}
+            <div
+              style={{
+                padding: 40,
+                minHeight: 350,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
+              }}
+            >
+              <h2
                 style={{
-                  fontSize: 16,
-                  fontWeight: 600,
-                  marginBottom: 20,
+                  width: "100%",
+                  textAlign: "left",
+                  fontSize: 22,
+                  fontWeight: 700,
+                  marginBottom: 60,
                 }}
               >
-                Select Payroll Month
-              </h3>
+                
+              </h2>
 
-              {/* MONTH BUTTONS */}
-              <div style={{ display: "flex", gap: 16 }}>
-                {months.map((month) => (
-                  <div
-                    key={month}
-                    onClick={() => setSelectedMonth(month)}
-                    style={{
-                      padding: "12px 20px",
-                      borderRadius: 8,
-                      border:
-                        selectedMonth === month
-                          ? "2px solid var(--brand)"
-                          : "1px solid var(--border)",
-                      background:
-                        selectedMonth === month ? "#eef6ff" : "white",
-                      cursor: "pointer",
-                      fontSize: 14,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                    }}
-                    className="hover-card"
-                  >
-                    <FiCalendar size={16} />
-                    {month}
-                  </div>
-                ))}
+              {/* Centered success icon */}
+              <div style={{ marginBottom: 20 }}>
+                <FiCheckCircle size={68} color="#10B981" />
               </div>
 
-              {/* SELECTED MONTH TEXT */}
-              <p style={{ marginTop: 20, fontSize: 14 }}>
-                <strong>Select month :</strong> {selectedMonth}
+              <h1 style={{ fontSize: 26, fontWeight: 700, marginBottom: 8 }}>
+                Payroll Successfully Processed!
+              </h1>
+
+              <p style={{ color: "var(--muted)", maxWidth: 480 }}>
+                Payroll for April 2025 has been processed successfully for 127
+                employees.
               </p>
 
-              {/* ACTION BUTTONS */}
+              {/* BUTTONS */}
               <div
                 style={{
+                  marginTop: 40,
+                  width: "100%",
                   display: "flex",
                   justifyContent: "space-between",
-                  marginTop: 40,
                 }}
               >
                 <button className="btn btn-soft"
-              onClick={() => navigate("/process-payroll/load-data")}
+              onClick={() => navigate("/finalize-payroll")}
               >‹ Back</button>
-                <button
-                className="btn btn-primary"
-                onClick={() => navigate("/process-payroll/load-data")}
-                >
-                Next ▶
-                </button>
 
+
+                <button className="btn btn-primary" onClick={finish}>
+                  Finish ✓
+                </button>
               </div>
             </div>
           </div>
@@ -154,10 +145,10 @@ const ProcessPayroll = () => {
                 marginTop: 20,
               }}
             >
-              <p style={{ color: "#3B82F6", fontWeight: 600, fontSize: 14 }}>
+              <p style={{ color: "#3B82F6", fontWeight: 600 }}>
                 Total Employees
               </p>
-              <h1 style={{ fontSize: 26, margin: 0 }}>127</h1>
+              <h1 style={{ fontSize: 26 }}>127</h1>
             </div>
 
             {/* Total Salary */}
@@ -171,10 +162,10 @@ const ProcessPayroll = () => {
                 margin: "20px 0",
               }}
             >
-              <p style={{ color: "#059669", fontWeight: 600, fontSize: 14 }}>
+              <p style={{ color: "#059669", fontWeight: 600 }}>
                 Total Salary
               </p>
-              <h1 style={{ fontSize: 26, margin: 0 }}>$42,542,000</h1>
+              <h1 style={{ fontSize: 26 }}>$42,542,000</h1>
             </div>
 
             {/* Pending Cases */}
@@ -187,15 +178,13 @@ const ProcessPayroll = () => {
                 borderRadius: 12,
               }}
             >
-              <p style={{ color: "#D97706", fontWeight: 600, fontSize: 14 }}>
-                Pending Cases
-              </p>
-              <h1 style={{ fontSize: 26, margin: 0 }}>127</h1>
+              <p style={{ color: "#D97706", fontWeight: 600 }}>Pending Cases</p>
+              <h1 style={{ fontSize: 26 }}>127</h1>
             </div>
 
             <hr style={{ margin: "28px 0" }} />
 
-            <p style={{ fontWeight: 600, fontSize: 14 }}>Processing Status</p>
+            <strong>Processing Status</strong>
 
             <div
               style={{
@@ -207,7 +196,7 @@ const ProcessPayroll = () => {
             >
               <div
                 style={{
-                  width: "25%",
+                  width: "100%",
                   height: "100%",
                   background: "#6366F1",
                   borderRadius: 6,
@@ -215,8 +204,8 @@ const ProcessPayroll = () => {
               ></div>
             </div>
 
-            <p style={{ fontSize: 12, marginTop: 8, color: "var(--muted)" }}>
-              Step 1 of 4 completed
+            <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 8 }}>
+              Step 4 of 4 completed
             </p>
           </div>
         </div>
@@ -225,4 +214,4 @@ const ProcessPayroll = () => {
   );
 };
 
-export default ProcessPayroll;
+export default ConfirmProcessing;

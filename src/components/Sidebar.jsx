@@ -30,7 +30,11 @@ const Sidebar = () => {
         { label: 'Net Salary Summary', path: '/net-salary-summary' },
       ],
     },
-    { id: 'payroll-processing', label: 'Payroll Processing', icon: '📊', path: '/payroll-processing' },
+    { id: 'payroll-processing', 
+      label: 'Payroll Processing', 
+      icon: '📊', 
+      path: '/payroll-processing'
+     },
     {
       id: 'time-attendance',
       label: 'Time & Attendance',

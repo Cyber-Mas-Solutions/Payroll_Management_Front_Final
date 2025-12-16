@@ -57,6 +57,11 @@ import ProcessPayroll from "./pages/Payroll Processing/ProcessPayroll";
 import LoadEmployeeData from "./pages/Payroll Processing/LoadEmployeeData";
 import GeneratePaySlip from "./pages/Payroll Processing/GeneratePaySlip";
 import EmployeeSalaryDetails from "./pages/Payroll Processing/EmployeeSalaryDetails";
+import ReviewSalary from "./pages/Payroll Processing/ReviewSalary";
+import FinalizePayroll from "./pages/Payroll Processing/FinalizePayroll";
+import ConfirmProcessing from "./pages/Payroll Processing/ConfirmProcessing";
+
+
 
 import ETFEPF from "./pages/ETFEPF";
 import EtfEpfProcess from "./pages/EtfEpfProcess";
@@ -164,8 +169,13 @@ function App() {
       <Route path="/payroll-processing" element={<Payroll/>} />
       <Route path="/process-payroll" element={<ProcessPayroll />} />
       <Route path="/process-payroll/load-data" element={<LoadEmployeeData />} />
+      <Route path="/process-payroll/review-salary" element={<ReviewSalary />} />
+      <Route path="/process-payroll/finalize-payroll" element={<FinalizePayroll />} />
+      <Route path="/process-payroll/confirm-processing"element={<ConfirmProcessing />}/>
       <Route path="/generate-pay-slip" element={<GeneratePaySlip />} />
       <Route path="/employee-salary-details" element={<EmployeeSalaryDetails />} />
+      
+      
 
 
 
