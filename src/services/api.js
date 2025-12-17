@@ -263,6 +263,16 @@ export const etfEpfApi = {
     
   processPayment: (payload) => 
     apiPost('/salary/etf-epf/process-payment', payload),
+
+   // NEW: Payment history and summary
+  getPaymentHistory: ({ year, month }) => 
+    apiGetWithParams('/salary/etf-epf/payment-history', { year, month }),
+    
+  getPaymentSummary: () => 
+    apiGet('/salary/etf-epf/payment-summary'),
+    
+  getEmployeePaymentHistory: (employeeId) => 
+    apiGet(`/salary/etf-epf/${employeeId}/history`),
   
 };
 

@@ -6,21 +6,22 @@ import PageHeader from "../components/PageHeader";
 import { etfEpfApi } from "../services/api"; 
 import { formatCurrency, showToast } from "../utils/helpers"; 
 
+
+
 export default function EtfEpfHistory() {
   const navigate = useNavigate();
   const location = useLocation();
 
   // --- Tabs Configuration ---
   const tabs = [
-    
-   
+    { key: 'etf-epf', label: "ETF & EPF", path: "/etf-epf" },
+    { key: 'etf-epf-process', label: "ETF/EPF Process", path: "/etf-epf-process" },
+    { key: 'etf-epf-history', label: "ETF/EPF History", path: "/etf-epf-history" },
     { key: 'earnings', label: 'Earnings', path: '/earnings' },
     { key: 'deductions', label: 'Deductions', path: '/deductions' },
     { key: 'allowances', label: 'Allowances', path: '/allowances' },
     { key: 'overtime', label: 'Overtime & Adjustments', path: '/overtime-adjustments' },
-     { key: 'compensation', label: 'Compensation Adjustment', path: '/compensation-adjustment' },
-    { key: 'etf-epf', label: "ETF & EPF", path: "/etf-epf" },
-    { key: 'etf-epf-process', label: "ETF/EPF Process", path: "/etf-epf-process" },
+    { key: 'compensation', label: 'Compensation Adjustment', path: '/compensation-adjustment' },
     { key: 'unpaid', label: "Unpaid Leaves", path: "/unpaid-leaves" },
     { key: 'summary', label: 'Net Salary Summary', path: '/net-salary-summary' }
   ];
