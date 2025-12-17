@@ -4,6 +4,7 @@ import PageHeader from "../../components/PageHeader";
 import { apiGet } from "../../services/api"; // Corrected path assumption
 
 
+
 // Utility function for formatting currency (Rs/LKR format)
 const formatCurrency = (n) => `Rs ${Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
 
