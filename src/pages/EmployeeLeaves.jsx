@@ -40,6 +40,7 @@ const EmployeeLeaves = () => {
 
       try {
         const currentYear = new Date().getFullYear();
+        // 💡 CHANGE 3: Backend now handles merging used days and grade-based entitlements
         const res = await leaveApi.getEmployeeBalances({
           year: currentYear,
           page: 1,
@@ -49,7 +50,7 @@ const EmployeeLeaves = () => {
         if (ignore) return;
 
         const items = (res && res.data) || [];
-        // backend already gives: employee_id, employee_code, name, department, annualUsed, annualTotal, casualUsed, casualTotal, halfDay1, halfDay2
+        // Expected fields now include medicalUsed and medicalTotal (from leave_rules)
         setAllEmployees(items);
         setPage(1);
       } catch (err) {
@@ -94,8 +95,8 @@ const EmployeeLeaves = () => {
       "Department",
       "Annual Leave Used",
       "Annual Leave Total",
-      "Casual Leave Used",
-      "Casual Leave Total",
+      "Medical Leave Used", // 💡 CHANGE 3: Updated column header
+      "Medical Leave Total", // 💡 CHANGE 3: Updated column header
       "Half Day 1",
       "Half Day 2",
     ];
@@ -105,8 +106,8 @@ const EmployeeLeaves = () => {
       e.department,
       e.annualUsed,
       e.annualTotal,
-      e.casualUsed,
-      e.casualTotal,
+      e.medicalUsed, // 💡 CHANGE 3: Use medicalUsed field
+      e.medicalTotal, // 💡 CHANGE 3: Use medicalTotal field
       e.halfDay1,
       e.halfDay2,
     ]);
@@ -286,7 +287,7 @@ const EmployeeLeaves = () => {
                   <th>Employee Name</th>
                   <th>Department</th>
                   <th>Annual Leave</th>
-                  <th>Casual Leave</th>
+                  <th>Medical Leave</th> {/* 💡 CHANGE 3: Updated column header */}
                   <th>Half Day</th>
                   <th>Leave Status</th>
                 </tr>
@@ -321,11 +322,11 @@ const EmployeeLeaves = () => {
                   current.map((employee, index) => {
                     const annualUsed = Number(employee.annualUsed ?? 0);
                     const annualTotal = Number(employee.annualTotal ?? 0);
-                    const casualUsed = Number(employee.casualUsed ?? 0);
-                    const casualTotal = Number(employee.casualTotal ?? 0);
+                    const medicalUsed = Number(employee.medicalUsed ?? 0); // 💡 CHANGE 3: New field name
+                    const medicalTotal = Number(employee.medicalTotal ?? 0); // 💡 CHANGE 3: New field name
 
                     const annualProgress = getLeaveProgress(annualUsed, annualTotal);
-                    const casualProgress = getLeaveProgress(casualUsed, casualTotal);
+                    const medicalProgress = getLeaveProgress(medicalUsed, medicalTotal); // 💡 CHANGE 3: Use medical calculation
 
                     return (
                       <tr key={employee.employee_id || index}>
@@ -392,7 +393,7 @@ const EmployeeLeaves = () => {
                               fontWeight: "600",
                             }}
                           >
-                           {casualUsed.toFixed(1)} / {casualTotal} days
+                           {medicalUsed.toFixed(1)} / {medicalTotal} days {/* 💡 CHANGE 3: Display medical leave usage */}
                           </div>
                           <div
                             style={{
@@ -405,9 +406,9 @@ const EmployeeLeaves = () => {
                           >
                             <div
                               style={{
-                                width: casualProgress.width,
+                                width: medicalProgress.width,
                                 height: "100%",
-                                backgroundColor: casualProgress.color,
+                                backgroundColor: medicalProgress.color,
                                 borderRadius: "3px",
                               }}
                             />
