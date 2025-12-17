@@ -1,9 +1,10 @@
-// src/pages/UnpaidLeaves.jsx
+// src/pages/UnpaidLeaves.jsx (Complete Fixed File)
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Layout from "../components/Layout";
 import PageHeader from "../components/PageHeader";
-import { apiGet, apiPost, apiPut, apiDelete } from "../services/api";
+// 💡 FIX 1: Import the new dedicated API wrapper
+import { unpaidLeavesApi, apiGet, apiPost, apiPut, apiDelete } from "../services/api"; 
 
 export default function UnpaidLeaves() {
   const navigate = useNavigate();
@@ -44,12 +45,15 @@ export default function UnpaidLeaves() {
     try {
       setLoading(true);
       setError("");
-      const resp = await apiGet("/salary/unpaid-leaves"); 
-      const data = Array.isArray(resp.data) ? resp.data : resp.data?.data || [];
+      // 💡 FIX 2: Use the new dedicated API wrapper for listing data
+      const resp = await unpaidLeavesApi.list(); 
+      // The backend (salary.controller.js) returns { ok: true, data: [...] }
+      const data = resp.data || []; 
       setRows(data);
     } catch (e) {
       console.error(e);
-      setError("Failed to load unpaid leaves data");
+      // Display the error message returned from the backend/API failure
+      setError(e.message || "Failed to load unpaid leaves data");
       setRows([]);
     } finally {
       setLoading(false);
@@ -157,34 +161,48 @@ export default function UnpaidLeaves() {
     }));
 
     // Auto-calculate total days if both start and end dates are provided
-    if ((name === "start_date" || name === "end_date") && formData.start_date && formData.end_date) {
-      const start = new Date(name === "start_date" ? value : formData.start_date);
-      const end = new Date(name === "end_date" ? value : formData.end_date);
-      if (start && end && end >= start) {
-        const timeDiff = end.getTime() - start.getTime();
-        const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 to include both start and end dates
-        setFormData(prev => ({
-          ...prev,
-          total_days: dayDiff.toString()
-        }));
+    if ((name === "start_date" || name === "end_date")) {
+      const newStartDate = name === "start_date" ? value : formData.start_date;
+      const newEndDate = name === "end_date" ? value : formData.end_date;
+      
+      if (newStartDate && newEndDate) {
+        const start = new Date(newStartDate);
+        const end = new Date(newEndDate);
+        
+        if (start && end && end >= start) {
+          const timeDiff = end.getTime() - start.getTime();
+          // +1 to include both start and end dates
+          const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; 
+          setFormData(prev => ({
+            ...prev,
+            total_days: dayDiff.toString()
+          }));
+          return;
+        }
       }
+      setFormData(prev => ({ // Clear days if dates are invalid/missing
+        ...prev,
+        total_days: ""
+      }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // 💡 FIX 3: Use the new dedicated API wrappers for CUD operations
       if (editingLeave) {
-        await apiPut(`/salary/unpaid-leaves/${editingLeave.id}`, formData);
+        // Send employee_id in payload for PUT route logic
+        await unpaidLeavesApi.update(editingLeave.id, {...formData, employee_id: editingLeave.employee_id}); 
       } else {
-        await apiPost("/salary/unpaid-leaves", formData);
+        await unpaidLeavesApi.create(formData);
       }
       closeModal();
       fetchUnpaidLeaves();
       window.alert(editingLeave ? "Unpaid leave updated successfully" : "Unpaid leave added successfully");
     } catch (e) {
       console.error(e);
-      window.alert("Failed to save unpaid leave");
+      window.alert(e.message || "Failed to save unpaid leave. Check console and network logs.");
     }
   };
 
@@ -192,26 +210,35 @@ export default function UnpaidLeaves() {
     if (!window.confirm(`Delete unpaid leave record for ${leave.full_name}?`)) return;
     
     try {
-      await apiDelete(`/salary/unpaid-leaves/${leave.id}`);
+      // 💡 FIX 4: Use the new dedicated API wrapper for Delete
+      await unpaidLeavesApi.del(leave.id);
       fetchUnpaidLeaves();
       window.alert("Unpaid leave record deleted successfully");
     } catch (e) {
       console.error(e);
-      window.alert("Failed to delete unpaid leave record");
+      window.alert(e.message || "Failed to delete unpaid leave record");
     }
   };
 
   const handleProcessDeduction = async (leave) => {
-    if (!window.confirm(`Process salary deduction for ${leave.full_name}'s unpaid leave? This will create a deduction entry in the payroll system.`)) return;
+    if (leave.status === 'Processed' || leave.status === 'Rejected') {
+        alert("This leave is already processed or rejected.");
+        return;
+    }
+    
+    if (!window.confirm(`Process salary deduction for ${leave.full_name}'s unpaid leave (${leave.total_days} days)? This will calculate the deduction based on Basic Salary / 20 * Total Days and create a deduction record.`)) return;
     
     try {
-      // NOTE: This calls the new processing logic in salary.controller.js
-      await apiPost(`/salary/unpaid-leaves/${leave.id}/process`, {});
+      // 💡 FIX 5: Use the new dedicated API wrapper for Process Deduction
+      const res = await unpaidLeavesApi.processDeduction(leave.id);
+      if (!res.ok) {
+        throw new Error(res.message || "Failed to process deduction.");
+      }
       fetchUnpaidLeaves();
-      window.alert("Salary deduction processed successfully and added to deductions.");
+      window.alert(`Salary deduction processed successfully. Amount: ${formatCurrency(res.amount)}`);
     } catch (e) {
       console.error(e);
-      window.alert("Failed to process salary deduction");
+      window.alert(e.message || "Failed to process salary deduction. Ensure the employee has a basic salary set.");
     }
   };
 
@@ -303,7 +330,6 @@ export default function UnpaidLeaves() {
             { label: "ETF/EPF Process", path: "/etf-epf-process" },
             { label: "Unpaid Leaves", path: "/unpaid-leaves" },
             { label: "Net Salary Summary", path: "/net-salary-summary" },
-            // Note: Leave Rules tab is intentionally excluded from the Salary navbar.
           ].map((t) => (
             <button
               key={t.path}
@@ -317,7 +343,7 @@ export default function UnpaidLeaves() {
         </div>
       </div>
 
-      {/* Deduction Rule Card (Requested Explanation) */}
+      {/* Deduction Rule Card (Explanation) */}
       <div className="card" style={{ 
           margin: "16px 24px 0 24px", 
           border: "1px solid var(--danger)", 
@@ -329,9 +355,9 @@ export default function UnpaidLeaves() {
             Unpaid leave records are created automatically when an employee's annual or medical leave usage exceeds their grade-specific limit (set in the Leave Management section).
           </p>
           <p style={{ margin: "8px 0 0 0", fontWeight: "600" }}>
-            Deduction Amount (if manual amount is not set): 
+            Deduction Amount (Calculated when processed, or manually set): 
             <span style={{ color: "var(--brand)", marginLeft: "5px" }}>
-              (Basic Salary / 30 Days) &times; Total Unpaid Leave Days
+              (Basic Salary / 20 Working Days) &times; Total Unpaid Leave Days
             </span>
           </p>
       </div>
@@ -511,7 +537,7 @@ export default function UnpaidLeaves() {
                           <span className={`pill ${
                             leave.status === "Approved" ? "pill-ok" : 
                             leave.status === "Rejected" ? "pill-danger" : 
-                            leave.status === "Processed" ? "pill-soft" :
+                            leave.status === "Processed" ? "pill-ok" : // Changed to pill-ok to signify completed deduction process
                             "pill-warn"
                           }`}>
                             {leave.status}
@@ -519,6 +545,7 @@ export default function UnpaidLeaves() {
                         </td>
                         <td>
                           <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                            {/* Allow edit/delete only if NOT processed */}
                             {leave.status !== 'Processed' && (
                               <button 
                                 className="btn btn-soft" 
@@ -528,7 +555,8 @@ export default function UnpaidLeaves() {
                                 Edit
                               </button>
                             )}
-                            {leave.status === "Approved" && (
+                            {/* Allow processing only if Approved/Pending and not Processed */}
+                            {leave.status !== "Processed" && (
                               <button 
                                 className="btn btn-primary" 
                                 onClick={() => handleProcessDeduction(leave)}

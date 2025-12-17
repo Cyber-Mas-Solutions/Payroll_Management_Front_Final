@@ -263,8 +263,37 @@ export const etfEpfApi = {
     
   processPayment: (payload) => 
     apiPost('/salary/etf-epf/process-payment', payload),
+
+   // NEW: Payment history and summary
+  getPaymentHistory: ({ year, month }) => 
+    apiGetWithParams('/salary/etf-epf/payment-history', { year, month }),
+    
+  getPaymentSummary: () => 
+    apiGet('/salary/etf-epf/payment-summary'),
+    
+  getEmployeePaymentHistory: (employeeId) => 
+    apiGet(`/salary/etf-epf/${employeeId}/history`),
   
 };
+
+// 💡 NEW: Unpaid Leaves API definition
+export const unpaidLeavesApi = {
+    // Used by UnpaidLeaves.jsx for table data (List)
+    list: () => apiGet('/salary/unpaid-leaves'),
+    
+    // Used by the "Add Unpaid Leave" modal (Create)
+    create: (data) => apiPost('/salary/unpaid-leaves', data),
+    
+    // Used by the "Edit" function (Update)
+    update: (id, data) => apiPut(`/salary/unpaid-leaves/${id}`, data),
+    
+    // Used by the "Delete" button (Delete)
+    del: (id) => apiDelete(`/salary/unpaid-leaves/${id}`),
+
+    // Used by the "Process" button (Deduction calculation trigger)
+    processDeduction: (id, data) => apiPost(`/salary/unpaid-leaves/${id}/process`, data || {}),
+};
+
 
 
 

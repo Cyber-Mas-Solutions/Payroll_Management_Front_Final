@@ -45,24 +45,32 @@ const [assigned, setAssigned] = useState([]);
 
   /** Month Navigation **/
   const goToPrevMonth = () => {
-    setDisplayMonth((prev) => {
-      if (prev === 0) {
-        setDisplayYear((y) => y - 1);
-        return 11;
-      }
-      return prev - 1;
-    });
-  };
+    let newMonth = displayMonth - 1;
+    let newYear = displayYear;
 
-  const goToNextMonth = () => {
-    setDisplayMonth((prev) => {
-      if (prev === 11) {
-        setDisplayYear((y) => y + 1);
-        return 0;
-      }
-      return prev + 1;
-    });
-  };
+    if (newMonth < 0) {
+      newMonth = 11;
+      newYear = displayYear - 1;
+    }
+    
+    // Set both states directly and synchronously
+    setDisplayYear(newYear); 
+    setDisplayMonth(newMonth);
+  };
+
+  const goToNextMonth = () => {
+    let newMonth = displayMonth + 1;
+    let newYear = displayYear;
+
+    if (newMonth > 11) {
+      newMonth = 0;
+      newYear = displayYear + 1;
+    }
+    
+    // Set both states directly and synchronously
+    setDisplayYear(newYear); 
+    setDisplayMonth(newMonth);
+  };
 
   const goToToday = () => {
     setDisplayYear(today.getFullYear());
