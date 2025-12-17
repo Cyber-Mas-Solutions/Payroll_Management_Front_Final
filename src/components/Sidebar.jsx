@@ -13,11 +13,7 @@ const Sidebar = () => {
     { id: 'dashboard', label: 'Dashboard', icon: '🏠', path: '/dashboard' },
     { id: 'employee-information', label: 'Employee Information', icon: '👤', path: '/employee-info' },
     {
-      id: 'salary-compensation',
-      label: 'Salary Compensation',
-      icon: '💰',
-      path: '/earnings',
-      hasSubmenu: true,
+      id: 'salary-compensation',label: 'Salary Compensation', icon: '💰', path: '/earnings', hasSubmenu: true,
       submenu: [
         { label: 'Earnings', path: '/earnings' },
         { label: 'Deductions', path: '/deductions' },
@@ -30,17 +26,10 @@ const Sidebar = () => {
         { label: 'Net Salary Summary', path: '/net-salary-summary' },
       ],
     },
-    { id: 'payroll-processing', 
-      label: 'Payroll Processing', 
-      icon: '📊', 
-      path: '/payroll-processing'
+    { id: 'payroll-processing', label: 'Payroll Processing', icon: '📊',  path: '/payroll-processing'
      },
     {
-      id: 'time-attendance',
-      label: 'Time & Attendance',
-      icon: '⏰',
-      path: '/time-attendance',
-      hasSubmenu: true,
+      id: 'time-attendance', label: 'Time & Attendance',icon: '⏰', path: '/time-attendance',hasSubmenu: true,
       submenu: [
         { label: 'Attendance', path: '/attendance-overview' },
         { label: 'Leave', path: '/employee-leaves' },
@@ -48,12 +37,9 @@ const Sidebar = () => {
     },
     { id: 'compliance-reporting', label: 'Compliance & Reporting', icon: '📋', path: '/compliance-reporting' },
     {
-      id: 'report-analytics',
-      label: 'Report & Analytics',
-      icon: '📈',
-      path: '/report-analytics',
+      id: 'report-analytics',label: 'Report & Analytics',icon: '📈',path: '/report-analytics',
     },
-        { id: 'administration', label: 'Administration', icon: '⚙️', path: '/administrative' },
+      { id: 'administration', label: 'Administration', icon: '⚙️', path: '/administrative' },
     { id: 'security-access-control', label: 'Security & Access', icon: '🔒', path: '/security-access-control' },
   ];
 
@@ -86,6 +72,17 @@ const Sidebar = () => {
   const administrativePaths = [
     '/administrative', '/administrative/departments', '/administrative/shifts',
     '/administrative/holidays', '/administrative/announcements', '/administrative/roles'
+  ];
+
+  const payrollprocessingPaths = [
+    '/payroll-processing', 
+    '/process-payroll', 
+    '/process-payroll/load-data', 
+    '/process-payroll/review-salary', 
+    '/process-payroll/finalize-payroll', 
+    'process-payroll/confirm-processing',
+    'generate-pay-slip',
+    'employee-salary-details',
   ];
 
   const getActiveItem = () => {

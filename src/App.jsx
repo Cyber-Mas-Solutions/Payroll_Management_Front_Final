@@ -60,6 +60,7 @@ import EmployeeSalaryDetails from "./pages/Payroll Processing/EmployeeSalaryDeta
 import ReviewSalary from "./pages/Payroll Processing/ReviewSalary";
 import FinalizePayroll from "./pages/Payroll Processing/FinalizePayroll";
 import ConfirmProcessing from "./pages/Payroll Processing/ConfirmProcessing";
+import EPFTransfer from "./pages/Payroll Processing/EPFTransfer";
 
 
 
@@ -174,6 +175,7 @@ function App() {
       <Route path="/process-payroll/confirm-processing"element={<ConfirmProcessing />}/>
       <Route path="/generate-pay-slip" element={<GeneratePaySlip />} />
       <Route path="/employee-salary-details" element={<EmployeeSalaryDetails />} />
+      <Route path="/epf-transfer" element={<EPFTransfer />} />
       
       
 

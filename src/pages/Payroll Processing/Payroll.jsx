@@ -17,55 +17,6 @@ const PayrollProcessing = () => {
     { label: "Insurance Payments", path: "/insurance-payments" },
   ];
 
-  /* ================= DATA ================= */
-  const employees = [
-    {
-      id: 1,
-      name: "Rashmi Samadara",
-      gross: 80000,
-      net: 20000,
-      deduction: 50000,
-      phone: "0752897453",
-      bankStatus: "Paid",
-    },
-    {
-      id: 2,
-      name: "Nadun Perera",
-      gross: 50000,
-      net: 30000,
-      deduction: 60000,
-      phone: "0914785623",
-      bankStatus: "Processing",
-    },
-    {
-      id: 3,
-      name: "Malith Malinga",
-      gross: 20000,
-      net: 40000,
-      deduction: 45000,
-      phone: "0765849269",
-      bankStatus: "Paid",
-    },
-    {
-      id: 4,
-      name: "Sumudu Perera",
-      gross: 40000,
-      net: 30000,
-      deduction: 60000,
-      phone: "0719545625",
-      bankStatus: "Paid",
-    },
-    {
-      id: 5,
-      name: "Maneesha Perera",
-      gross: 60000,
-      net: 35000,
-      deduction: 40000,
-      phone: "0724895287",
-      bankStatus: "Paid",
-    },
-  ];
-
   return (
     <Layout>
       {/* ================= PAGE HEADER ================= */}
@@ -74,7 +25,7 @@ const PayrollProcessing = () => {
         title="Payroll Processing & Disbursement"
       />
 
-      {/* ================= TAB BAR (LIKE ACCESS CONTROL) ================= */}
+      {/* ================= TAB BAR ================= */}
       <div
         className="card"
         style={{
@@ -87,8 +38,8 @@ const PayrollProcessing = () => {
         {tabs.map((t) => (
           <button
             key={t.path}
-            className={`btn btn-soft ${
-              location.pathname === t.path ? "btn-primary" : ""
+            className={`btn ${
+              location.pathname === t.path ? "btn-primary" : "btn-soft"
             }`}
             onClick={() => navigate(t.path)}
           >
@@ -101,25 +52,19 @@ const PayrollProcessing = () => {
       <div className="card" style={{ padding: 24 }}>
         <div className="grid-3" style={{ marginBottom: 20 }}>
           <div className="card" style={{ margin: 0 }}>
-            <div style={{ fontSize: 13, color: "var(--muted)" }}>
-              Gross Salary
-            </div>
+            <div style={{ fontSize: 13, color: "var(--muted)" }}>Gross Salary</div>
             <div style={{ fontSize: 24, fontWeight: 700 }}>$254,896.00</div>
             <small style={{ color: "green" }}>↑ 3.2% Last month</small>
           </div>
 
           <div className="card" style={{ margin: 0 }}>
-            <div style={{ fontSize: 13, color: "var(--muted)" }}>
-              Net Salary
-            </div>
+            <div style={{ fontSize: 13, color: "var(--muted)" }}>Net Salary</div>
             <div style={{ fontSize: 24, fontWeight: 700 }}>$324,876.00</div>
             <small style={{ color: "green" }}>↑ 2.8% Last month</small>
           </div>
 
           <div className="card" style={{ margin: 0 }}>
-            <div style={{ fontSize: 13, color: "var(--muted)" }}>
-              Total Deductions
-            </div>
+            <div style={{ fontSize: 13, color: "var(--muted)" }}>Total Deductions</div>
             <div style={{ fontSize: 24, fontWeight: 700 }}>$678,238.00</div>
             <small style={{ color: "red" }}>↑ 4.5% Last month</small>
           </div>
@@ -127,9 +72,7 @@ const PayrollProcessing = () => {
 
         {/* ================= PAYROLL STATUS ================= */}
         <div className="card" style={{ marginBottom: 20 }}>
-          <h3 style={{ fontSize: 16, fontWeight: 600 }}>
-           Salary Transfer
-          </h3>
+          <h3 style={{ fontSize: 16, fontWeight: 600 }}>Salary Transfer</h3>
 
           <div className="grid-4" style={{ marginBottom: 20 }}>
             <div>
@@ -153,7 +96,7 @@ const PayrollProcessing = () => {
             <div>
               <span className="pill">Completed</span>
               <div style={{ height: 4, background: "#ccc", marginTop: 6 }} />
-              <small>Completed</small>
+              <small>Pending</small>
             </div>
           </div>
 
@@ -172,17 +115,10 @@ const PayrollProcessing = () => {
               Generate Pay Slip
             </button>
 
-            <button className="btn btn-soft">
-              Send Salary to Bank
-            </button>
+            <button className="btn btn-soft">Send Salary to Bank</button>
           </div>
         </div>
       </div>
-
-     
-
-      {/* ================= PAGINATION ================= */}
-    
     </Layout>
   );
 };
