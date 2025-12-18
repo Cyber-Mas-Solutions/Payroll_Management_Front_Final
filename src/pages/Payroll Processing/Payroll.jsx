@@ -21,7 +21,7 @@ const PayrollProcessing = () => {
     <Layout>
       {/* ================= PAGE HEADER ================= */}
       <PageHeader
-        breadcrumb={["Payroll", "Payroll Processing & Disbursement"]}
+        breadcrumb={["Payroll", "Salary Transfer Overview"]}
         title="Payroll Processing & Disbursement"
       />
 

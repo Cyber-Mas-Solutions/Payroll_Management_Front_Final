@@ -25,178 +25,135 @@ const EmployeeSalaryDetails = () => {
   ];
 
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const closeModal = () => setSelectedEmployee(null);
 
   return (
     <Layout>
       <PageHeader
-        breadcrumb={["Payroll", "Payroll Processing & Disbursement"]}
+        breadcrumb={["Payroll", "Employee Salary Details"]}
         title="Payroll Processing & Disbursement"
       />
 
-      {/* ================= TABS ================= */}
+      {/* ================= FIXED AREA ================= */}
       <div
-        className="card"
         style={{
           display: "flex",
-          gap: "8px",
-          marginBottom: "16px",
-          flexWrap: "wrap",
+          flexDirection: "column",
+          height: "calc(100vh - 170px)", // Adjust if header height differs
         }}
       >
-        {tabs.map((t) => (
-          <button
-            key={t.path}
-            /* Logic updated to toggle between primary (white text) and soft */
-            className={`btn ${
-              location.pathname === t.path ? "btn-primary" : "btn-soft"
-            }`}
-            onClick={() => navigate(t.path)}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Employee Table */}
-      <div className="card" style={{ padding: 0 }}>
+        {/* ===== FIXED TABS ===== */}
         <div
+          className="card"
           style={{
-            padding: "12px 16px",
-            borderBottom: "1px solid var(--border)",
             display: "flex",
-            justifyContent: "space-between",
+            gap: 8,
+            flexWrap: "wrap",
+            flexShrink: 0,
           }}
         >
-          <div style={{ fontWeight: 700 }}>Employee Salary Details</div>
-          <div style={{ fontSize: 12, color: "var(--muted)" }}>
+          {tabs.map((t) => (
+            <button
+              key={t.path}
+              className={`btn ${
+                location.pathname === t.path ? "btn-primary" : "btn-soft"
+              }`}
+              onClick={() => navigate(t.path)}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* ===== FIXED TABLE HEADER ===== */}
+        <div
+          className="card"
+          style={{
+            marginTop: 12,
+            padding: "12px 16px",
+            display: "flex",
+            justifyContent: "space-between",
+            flexShrink: 0,
+          }}
+        >
+          <strong>Employee Salary Details</strong>
+          <span style={{ fontSize: 12, color: "var(--muted)" }}>
             Showing {employees.length} records
-          </div>
+          </span>
         </div>
 
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Profile</th>
-              <th>Gross Salary</th>
-              <th>Net Salary</th>
-              <th>Deduction</th>
-              <th>Mobile Number</th>
-              <th>Bank Transfer</th>
-              <th>View</th>
-            </tr>
-          </thead>
-          <tbody>
-            {employees.map((emp) => (
-              <tr key={emp.id}>
-                <td>{emp.name}</td>
-                <td>${emp.gross.toLocaleString()}</td>
-                <td>${emp.net.toLocaleString()}</td>
-                <td>${emp.deduction.toLocaleString()}</td>
-                <td>{emp.phone}</td>
-                <td>{emp.bankStatus}</td>
-                <td>
-                  <button
-                    className="btn btn-soft"
-                    onClick={() => setSelectedEmployee(emp)}
-                  >
-                    View
-                  </button>
-                </td>
+        {/* ===== SCROLLABLE TABLE ONLY ===== */}
+        <div
+          className="card"
+          style={{
+            padding: 0,
+            marginTop: 8,
+            flex: 1,
+            overflowY: "auto",
+          }}
+        >
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Profile</th>
+                <th>Gross Salary</th>
+                <th>Net Salary</th>
+                <th>Deduction</th>
+                <th>Mobile Number</th>
+                <th>Bank Transfer</th>
+                <th>View</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Pagination */}
-      <div
-        className="card"
-        style={{
-          marginTop: 16,
-          display: "flex",
-          justifyContent: "space-between",
-        }}
-      >
-        <span>Showing {employees.length} of {employees.length} results</span>
-        <div style={{ display: "flex", gap: 10 }}>
-          <button className="btn btn-soft">Prev</button>
-          <button className="btn btn-soft">Next</button>
+            </thead>
+            <tbody>
+              {employees.map((emp) => (
+                <tr key={emp.id}>
+                  <td>{emp.name}</td>
+                  <td>${emp.gross.toLocaleString()}</td>
+                  <td>${emp.net.toLocaleString()}</td>
+                  <td>${emp.deduction.toLocaleString()}</td>
+                  <td>{emp.phone}</td>
+                  <td>{emp.bankStatus}</td>
+                  <td>
+                    <button
+                      className="btn btn-soft"
+                      onClick={() => setSelectedEmployee(emp)}
+                    >
+                      View
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
-      {/* MODAL WIDGET */}
+      {/* ===== MODAL ===== */}
       {selectedEmployee && (
         <div
-          className="modal-overlay"
-          onClick={closeModal}
+          onClick={() => setSelectedEmployee(null)}
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.45)",
+            background: "rgba(0,0,0,0.4)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             zIndex: 9999,
-            padding: 16,
           }}
         >
           <div
-            className="modal-content card"
+            className="card"
             onClick={(e) => e.stopPropagation()}
-            style={{
-              width: "min(520px, 100%)",
-              padding: 18,
-              borderRadius: 12,
-              margin: 0 // Modal needs margin 0 to center properly
-            }}
+            style={{ width: 420 }}
           >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 12,
-              }}
-            >
-              <h3 style={{ margin: 0 }}>Employee Details</h3>
-              <button className="btn btn-soft" onClick={closeModal}>✕</button>
-            </div>
-
-            <div style={{ display: "grid", gap: 10 }}>
-              <div>
-                <small style={{ color: "var(--muted)" }}>Employee Name</small>
-                <div style={{ fontWeight: 700 }}>{selectedEmployee.name}</div>
-              </div>
-              <div className="grid-2" style={{ gap: 12 }}>
-                <div>
-                  <small style={{ color: "var(--muted)" }}>Gross Salary</small>
-                  <div>${selectedEmployee.gross.toLocaleString()}</div>
-                </div>
-                <div>
-                  <small style={{ color: "var(--muted)" }}>Net Salary</small>
-                  <div>${selectedEmployee.net.toLocaleString()}</div>
-                </div>
-              </div>
-              <div className="grid-2" style={{ gap: 12 }}>
-                <div>
-                  <small style={{ color: "var(--muted)" }}>Deduction</small>
-                  <div>${selectedEmployee.deduction.toLocaleString()}</div>
-                </div>
-                <div>
-                  <small style={{ color: "var(--muted)" }}>Bank Status</small>
-                  <div style={{ fontWeight: 600 }}>{selectedEmployee.bankStatus}</div>
-                </div>
-              </div>
-              <div>
-                <small style={{ color: "var(--muted)" }}>Mobile Number</small>
-                <div>{selectedEmployee.phone}</div>
-              </div>
-            </div>
-
-            <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 16, gap: 8 }}>
-              <button className="btn btn-soft" onClick={closeModal}>Close</button>
-            </div>
+            <h3>{selectedEmployee.name}</h3>
+            <p>Gross: ${selectedEmployee.gross}</p>
+            <p>Net: ${selectedEmployee.net}</p>
+            <p>Deduction: ${selectedEmployee.deduction}</p>
+            <p>Status: {selectedEmployee.bankStatus}</p>
+            <button className="btn btn-soft" onClick={() => setSelectedEmployee(null)}>
+              Close
+            </button>
           </div>
         </div>
       )}

@@ -1,518 +1,374 @@
-import React, { useEffect, useMemo, useState, useRef } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Layout from "../../components/Layout";
 import PageHeader from "../../components/PageHeader";
-import { apiGet } from "../../services/api"; // Corrected path assumption
-
-
-// Utility function for formatting currency (Rs/LKR format)
-const formatCurrency = (n) => `Rs ${Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
-
-// Utility function to convert YYYY-MM to a display label
-const formatMonthLabel = (yyyyMM) => {
-    if (!yyyyMM) return 'N/A';
-    try {
-        const [year, month] = yyyyMM.split('-');
-        const date = new Date(year, month - 1, 1);
-        return date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-    } catch {
-        return yyyyMM;
-    }
-}
+import { useNavigate, useLocation } from "react-router-dom";
 
 const GeneratePaySlip = () => {
-    const payslipRef = useRef(null);
-    const fmt = formatCurrency;
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    // --- State Management ---
-    const [employees, setEmployees] = useState([]);
-    const [departments, setDepartments] = useState([]);
-    const [loading, setLoading] = useState(false);
+  // ================= TABS =================
+  const tabs = [
+    { label: "Salary Transfer Overview", path: "/payroll-processing" },
+    { label: "Employee Salary Details", path: "/employee-salary-details" },
+    { label: "EPF Transfer", path: "/epf-transfer" },
+    { label: "ETF Transfer", path: "/etf-transfer" },
+    { label: "Income Tax Transfer", path: "/income-tax-transfer" },
+    { label: "Insurance Payments", path: "/insurance-payments" },
+  ];
 
-    // Filters
-    const [selectedDepartmentId, setSelectedDepartmentId] = useState("");
-    const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
-    
-    // Use YYYY-MM format for state
-    const today = new Date();
-    const defaultMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
-    const [selectedMonth, setSelectedMonth] = useState(defaultMonth); 
+  // Toggle: Employee / Department
+  const [mode, setMode] = useState("employee"); // "employee" | "department"
 
-    // Payslip Data
-    const [generated, setGenerated] = useState(false);
-    const [payslipData, setPayslipData] = useState(null); 
+  // Filters
+  const [selectedDepartment, setSelectedDepartment] = useState("All Departments");
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState("1");
+  const [employeeIdFilter, setEmployeeIdFilter] = useState(""); // ✅ NEW
+  const [selectedMonth, setSelectedMonth] = useState("January 2025");
 
-    /* ----------------------------------------------------
-    // 1. Initial Data Fetch: Employees and Departments
-    ---------------------------------------------------- */
-    useEffect(() => {
-        const fetchInitialData = async () => {
-            setLoading(true);
-            try {
-                // Fetch Employees and Departments in parallel
-                const [empResp, deptResp] = await Promise.all([
-                    apiGet('/salary/employees'), 
-                    apiGet('/salary/departments'), 
-                ]);
-                
-                // Use robust null checks on API response structure
-                const empList = empResp?.data || [];
-                const deptList = deptResp?.data || [];
+  // Generated payslip state
+  const [generated, setGenerated] = useState(false);
 
-                const formattedEmployees = empList.map(e => ({
-                    id: String(e.employee_id),
-                    label: `${e.full_name} - ${e.department_name}`,
-                    name: e.full_name,
-                    // Use robust property access with fallback
-                    position: e.position || 'N/A', 
-                    department: e.department_name || 'N/A',
-                    department_id: e.department_id,
-                    employee_code: e.employee_code,
-                }));
+  // Dummy data
+  const employees = useMemo(
+    () => [
+      { id: "1", label: "Rashmi - HR", name: "Rashmi Samadara", position: "HR Manager", department: "HR Department" },
+      { id: "2", label: "Nadun - HR", name: "Nadun Perera", position: "HR Executive", department: "HR Department" },
+      { id: "3", label: "Malith - Finance", name: "Malith Malinga", position: "Accountant", department: "Finance Department" },
+    ],
+    []
+  );
 
-                setEmployees(formattedEmployees);
-                setDepartments(deptList);
+  const departments = useMemo(
+    () => ["All Departments", "HR Department", "Finance Department", "IT Department"],
+    []
+  );
 
-                // Set the default employee ID only if we successfully got employees
-                if (formattedEmployees.length > 0) {
-                    setSelectedEmployeeId(String(formattedEmployees[0].id));
-                }
+  const months = useMemo(
+    () => [
+      "January 2025", "February 2025", "March 2025", "April 2025", "May 2025", "June 2025",
+      "July 2025", "August 2025", "September 2025", "October 2025", "November 2025", "December 2025",
+    ],
+    []
+  );
 
-            } catch (e) {
-                console.error("Failed to fetch initial setup data:", e);
-                setEmployees([]);
-                setDepartments([]);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchInitialData();
-    }, []);
+  // Filter employees by department + employee ID
+  const filteredEmployees = useMemo(() => {
+    let list = employees;
 
-    /* ----------------------------------------------------
-    // 2. Filtered Employee List
-    ---------------------------------------------------- */
-    const filteredEmployees = useMemo(() => {
-        if (!selectedDepartmentId) return employees;
-        return employees.filter((e) => String(e.department_id) === String(selectedDepartmentId));
-    }, [employees, selectedDepartmentId]);
+    if (selectedDepartment !== "All Departments") {
+      list = list.filter((e) => e.department === selectedDepartment);
+    }
 
-    // Update selected employee ID if the filter removes the currently selected one
-    useEffect(() => {
-        if (!filteredEmployees.length) {
-            setSelectedEmployeeId("");
-            return;
-        }
-        const exists = filteredEmployees.some((e) => e.id === selectedEmployeeId);
-        if (!exists) {
-            setSelectedEmployeeId(filteredEmployees[0].id);
-        }
-    }, [filteredEmployees, selectedEmployeeId]);
+    if (employeeIdFilter.trim()) {
+      list = list.filter((e) => e.id.includes(employeeIdFilter.trim()));
+    }
 
-    const selectedEmployee = useMemo(
-        () => employees.find((e) => e.id === selectedEmployeeId),
-        [employees, selectedEmployeeId]
-    );
+    return list;
+  }, [employees, selectedDepartment, employeeIdFilter]);
 
-    /* ----------------------------------------------------
-    // 3. API Call Handler (Generate Payslip)
-    ---------------------------------------------------- */
-    const handleGeneratePayslip = async () => {
-        if (!selectedEmployeeId || !selectedMonth) {
-            alert("Please select an employee and a month.");
-            return;
-        }
+  // Ensure selected employee is valid
+  useEffect(() => {
+    if (!filteredEmployees.length) return;
+    const exists = filteredEmployees.some((e) => e.id === selectedEmployeeId);
+    if (!exists) setSelectedEmployeeId(filteredEmployees[0].id);
+  }, [filteredEmployees, selectedEmployeeId]);
 
-        setLoading(true);
-        setGenerated(false);
-        setPayslipData(null);
-        
-        const [year, month] = selectedMonth.split('-');
+  const selectedEmployee = useMemo(
+    () => filteredEmployees.find((e) => e.id === selectedEmployeeId) || filteredEmployees[0],
+    [filteredEmployees, selectedEmployeeId]
+  );
 
-        try {
-            const response = await apiGet(`/salary/payslip/${selectedEmployeeId}/${year}/${month}`);
-            
-            if (response.ok && response.data) {
-                setPayslipData(response.data);
-                setGenerated(true);
-            } else {
-                // If response is NOT ok, display the message returned by the backend
-                alert(response.message || "Failed to fetch payslip data. Ensure salary and earnings data exists for the period.");
-                setPayslipData(null);
-            }
-        } catch (error) {
-            console.error("Error fetching payslip:", error);
-            alert("An error occurred while fetching the payslip: " + error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
+  // Payslip values
+  const payPeriod = selectedMonth;
+  const payDate = "April 5, 2025";
 
-    /* ----------------------------------------------------
-    // 4. Data Mapping and Calculation
-    ---------------------------------------------------- */
-    
-    const employeeDetails = payslipData?.employee || {};
-    const payroll = payslipData?.payslip || { earnings: [], deductions: [], totals: {} };
-    
-    // Earnings: Filter out Basic Salary as it's displayed separately
-    const earningsList = payroll.earnings.filter(e => e.name !== 'Basic Salary' && Number(e.amount) > 0);
-    const basicSalary = payroll.earnings.find(e => e.name === 'Basic Salary')?.amount || 0;
-    const deductionsList = payroll.deductions.filter(d => Number(d.amount) > 0);
+  const earnings = useMemo(
+    () => [
+      { desc: "Basic Salary", amount: 5000 },
+      { desc: "Other", amount: 1000 },
+      { desc: "Transportation", amount: 500 },
+      { desc: "Medical", amount: 300 },
+    ],
+    []
+  );
 
-    const totalEarnings = payroll.totals.grossSalary || 0;
-    const totalDeductions = payroll.totals.totalDeductions || 0;
-    const netPay = payroll.totals.netSalary || Number(totalEarnings) - Number(totalDeductions);
-    
-    const displayMonthLabel = formatMonthLabel(selectedMonth);
-    const payDate = `${displayMonthLabel} (End of Period)`; 
-    
-    /* ----------------------------------------------------
-    // 5. Action Handlers (Print/PDF)
-    ---------------------------------------------------- */
+  const deductions = useMemo(
+    () => [
+      { desc: "Uupaid Leave", amount: 5000 },
+      { desc: "Short Leave", amount: 1000 },
+      { desc: "EPF Deduction", amount: 500 },
+      { desc: "Loans", amount: 300 },
+    ],
+    []
+  );
 
-    const handlePrint = () => {
-        if (!payslipRef.current) return;
-        window.print();
-    };
+  const totalEarnings = earnings.reduce((sum, x) => sum + x.amount, 0);
+  const totalDeductionsSummary = 1150;
+  const netPay = totalEarnings - totalDeductionsSummary;
 
-    const handleDownloadAsPDF = async () => {
-        if (!payslipData || !selectedEmployeeId) {
-            alert("Please generate a payslip first.");
-            return;
-        }
-        
-        const [year, month] = selectedMonth.split('-');
-        
-        try {
-            const url = `/api/salary/payslip?employee_id=${selectedEmployeeId}&month=${month}&year=${year}`;
-            const response = await fetch(url);
-            
-            if (!response.ok) throw new Error("Failed to generate PDF on server. Status: " + response.status);
-            
-            const blob = await response.blob();
-            
-            const disposition = response.headers.get('Content-Disposition');
-            let filename = `payslip_${employeeDetails.full_name || 'employee'}_${year}_${month}.pdf`;
-            if (disposition && disposition.indexOf('filename=') !== -1) {
-                filename = disposition.split('filename=')[1].replace(/"/g, '');
-            }
+  const fmt = (n) => `$${Number(n).toLocaleString()}`;
 
-            const href = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = href;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(href);
-            
-        } catch (error) {
-            console.error("PDF download error:", error);
-            alert("Error downloading PDF: " + error.message);
-        }
-    };
+  const handleGenerate = () => setGenerated(true);
+  const handlePrint = () => window.print();
+  const handleDownload = () => alert("Download action (wire this to PDF generation).");
+  const handleDownloadAsPDF = () => alert("Download as PDF (wire this to PDF generation).");
 
+  return (
+    <Layout>
+      <PageHeader breadcrumb={["Payroll", "Generate Pay Slip"]} title="Generate Pay Slip" />
 
-    /* ----------------------------------------------------
-    // 6. Payslip Display Component
-    ---------------------------------------------------- */
-    
-    const PayslipContent = () => (
-        <div ref={payslipRef} className="payslip-card-inner-content">
-            
-            {/* Header */}
-            <div style={{ padding: 18, borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", gap: 16 }}>
-                <div>
-                    <div style={{ fontWeight: 800 }}>ABC Corporation</div>
-                    <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>
-                        123 Business Ave, Galle road,<br />Colombo 03
-                    </div>
-                </div>
-                <div style={{ textAlign: "right" }}>
-                    <div style={{ fontWeight: 800, letterSpacing: 0.5 }}>PAY SLIP</div>
-                    <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 6 }}>
-                        Pay Period: {displayMonthLabel}
-                        <br />
-                        Pay Date: {payDate}
-                    </div>
-                </div>
+      {/* ================= TAB BAR ================= */}
+      <div
+        className="card"
+        style={{
+          display: "flex",
+          gap: "8px",
+          marginBottom: "16px",
+          flexWrap: "wrap",
+        }}
+      >
+        {tabs.map((t) => (
+          <button
+            key={t.path}
+            className={`btn ${location.pathname === t.path ? "btn-primary" : "btn-soft"}`}
+            onClick={() => navigate(t.path)}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* ================= PAYSLIP FILTERS + GENERATE ================= */}
+      <div className="card" style={{ padding: 24 }}>
+        <div style={{ color: "var(--muted)", fontSize: 13, marginBottom: 16 }}>
+          Select employee, department and month to generate pay slips
+        </div>
+
+        {/* Filters */}
+        <div className="grid-3" style={{ gap: 16 }}>
+          {/* Employee */}
+          <div>
+            <div style={{ fontSize: 12, color: "var(--muted)", marginBottom: 6 }}>Filter by Employee ID</div>
+            <input
+              className="input"
+              placeholder="Enter Employee ID"
+              value={employeeIdFilter}
+              onChange={(e) => setEmployeeIdFilter(e.target.value)}
+              disabled={mode !== "employee"}
+              style={{ marginBottom: 8 }}
+            />
+            <div style={{ fontSize: 12, color: "var(--muted)", marginBottom: 6 }}>Select Employee</div>
+            <select
+              className="select"
+              value={selectedEmployeeId}
+              onChange={(e) => setSelectedEmployeeId(e.target.value)}
+              disabled={mode !== "employee"}
+            >
+              {filteredEmployees.map((e) => (
+                <option key={e.id} value={e.id}>
+                  {e.id} - {e.name} ({e.department})
+                </option>
+              ))}
+            </select>
+            {mode !== "employee" && (
+              <div style={{ marginTop: 6, fontSize: 11, color: "var(--muted)" }}>
+                Employee selection disabled in Department mode.
+              </div>
+            )}
+          </div>
+
+          {/* Department */}
+          <div>
+            <div style={{ fontSize: 12, color: "var(--muted)", marginBottom: 6 }}>Select Department</div>
+            <select
+              className="select"
+              value={selectedDepartment}
+              onChange={(e) => setSelectedDepartment(e.target.value)}
+            >
+              {departments.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Month */}
+          <div>
+            <div style={{ fontSize: 12, color: "var(--muted)", marginBottom: 6 }}>Select Month</div>
+            <select
+              className="select"
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+            >
+              {months.map((m) => (
+                <option key={m} value={m}>{m}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div style={{ marginTop: 18 }}>
+          <button className="btn btn-soft" onClick={handleGenerate} disabled={!filteredEmployees.length}>
+            📄 Generate Pay slip
+          </button>
+        </div>
+
+        {/* ================= PAYSLIP REVIEW ================= */}
+        {generated && (
+          <div style={{ marginTop: 24 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+              <div style={{ fontSize: 18, fontWeight: 700 }}>Pay Slip Review</div>
+              <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                <button className="btn btn-soft" onClick={handleDownloadAsPDF}>⬇ Download as PDF</button>
+              </div>
             </div>
 
-            {/* Body */}
-            <div style={{ padding: 18 }}>
+            <div className="card" style={{ margin: "14px 0 0 0", padding: 18, overflow: "hidden" }}>
+              {/* Header */}
+              <div style={{ paddingBottom: 18, borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", gap: 16 }}>
+                <div>
+                  <div style={{ fontWeight: 800 }}>ABC Corporation</div>
+                  <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>
+                    123 Business Ave, Galle road,<br />
+                    Colombo 03
+                  </div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontWeight: 800, letterSpacing: 0.5 }}>PAY SLIP</div>
+                  <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 6 }}>
+                    Pay Month: {payPeriod}<br />
+                    Pay Date: {payDate}
+                  </div>
+                </div>
+              </div>
+
+              {/* Body */}
+              <div style={{ marginTop: 18 }}>
+                {/* Employee & Payment Summary */}
                 <div className="grid-2" style={{ alignItems: "start" }}>
-                    {/* Employee Details */}
-                    <div>
-                        <div style={{ fontWeight: 700, marginBottom: 10 }}>Employee Details</div>
-                        <div style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 14, background: "#fafafa" }}>
-                            <div style={{ display: "grid", gridTemplateColumns: "110px 10px 1fr", rowGap: 10, columnGap: 8, fontSize: 13 }}>
-                                
-                                <div style={{ color: "var(--muted)", fontWeight: 600 }}>Employee Code</div>
-                                <div>:</div>
-                                <div>{employeeDetails.employee_code || selectedEmployee?.employee_code || 'N/A'}</div>
+                  {/* Employee Details */}
+                  <div>
+                    <div style={{ fontWeight: 700, marginBottom: 10 }}>Employee Details</div>
+                    <div style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 14, background: "#fafafa" }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "110px 10px 1fr", rowGap: 10, columnGap: 8, fontSize: 13 }}>
+                        <div style={{ color: "var(--muted)", fontWeight: 600 }}>Employee ID</div>
+                        <div>:</div>
+                        <div>{mode === "employee" ? selectedEmployeeId : "-"}</div>
 
-                                <div style={{ color: "var(--muted)", fontWeight: 600 }}>Name</div>
-                                <div>:</div>
-                                <div>{employeeDetails.full_name || selectedEmployee?.name || 'N/A'}</div>
+                        <div style={{ color: "var(--muted)", fontWeight: 600 }}>Name</div>
+                        <div>:</div>
+                        <div>{mode === "employee" ? selectedEmployee?.name : "Department Payslip"}</div>
 
-                                <div style={{ color: "var(--muted)", fontWeight: 600 }}>Position</div>
-                                <div>:</div>
-                                <div>{employeeDetails.position || selectedEmployee?.position || 'N/A'}</div>
+                        <div style={{ color: "var(--muted)", fontWeight: 600 }}>Position</div>
+                        <div>:</div>
+                        <div>{mode === "employee" ? selectedEmployee?.position : "-"}</div>
 
-                                <div style={{ color: "var(--muted)", fontWeight: 600 }}>Department</div>
-                                <div>:</div>
-                                <div>{employeeDetails.department_name || selectedEmployee?.department || 'N/A'}</div>
+                        <div style={{ color: "var(--muted)", fontWeight: 600 }}>Department</div>
+                        <div>:</div>
+                        <div>{selectedDepartment === "All Departments" ? (selectedEmployee?.department || "-") : selectedDepartment}</div>
 
-                                <div style={{ color: "var(--muted)", fontWeight: 600 }}>NIC</div>
-                                <div>:</div>
-                                <div>{employeeDetails.nic || 'N/A'}</div>
-                                
-                                <div style={{ color: "var(--muted)", fontWeight: 600 }}>EPF/ETF No</div>
-                                <div>:</div>
-                                <div>{employeeDetails.epf_no || 'N/A'} / {employeeDetails.etf_no || 'N/A'}</div>
-                                
-                            </div>
-                        </div>
+                        <div style={{ color: "var(--muted)", fontWeight: 600 }}>Month</div>
+                        <div>:</div>
+                        <div>{selectedMonth}</div>
+                      </div>
                     </div>
+                  </div>
 
-                    {/* Payment Summary */}
-                    <div>
-                        <div style={{ fontWeight: 700, marginBottom: 10 }}>Payment Summary</div>
-                        <div style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 14, background: "#fafafa" }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 10 }}>
-                                <span style={{ color: "var(--muted)" }}>Gross Earnings:</span>
-                                <strong>{fmt(totalEarnings)}</strong>
-                            </div>
-                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 10 }}>
-                                <span style={{ color: "var(--muted)" }}>Total Deductions:</span>
-                                <strong>{fmt(totalDeductions)}</strong>
-                            </div>
-                            <div style={{ height: 1, background: "var(--border)", margin: "10px 0" }} />
-                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
-                                <span style={{ fontWeight: 700 }}>NET PAYABLE:</span>
-                                <strong style={{ color: "var(--success)" }}>{fmt(netPay)}</strong>
-                            </div>
-                        </div>
+                  {/* Payment Summary */}
+                  <div>
+                    <div style={{ fontWeight: 700, marginBottom: 10 }}>Payment Summary</div>
+                    <div style={{ border: "1px solid var(--border)", borderRadius: 8, padding: 14, background: "#fafafa" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 10 }}>
+                        <span style={{ color: "var(--muted)" }}>Total Earnings:</span>
+                        <strong>{fmt(totalEarnings)}</strong>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 10 }}>
+                        <span style={{ color: "var(--muted)" }}>Total Deductions:</span>
+                        <strong>{fmt(totalDeductionsSummary)}</strong>
+                      </div>
+                      <div style={{ height: 1, background: "var(--border)", margin: "10px 0" }} />
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14 }}>
+                        <span style={{ fontWeight: 700 }}>Net Pay:</span>
+                        <strong style={{ color: "green" }}>{fmt(netPay)}</strong>
+                      </div>
                     </div>
+                  </div>
                 </div>
 
                 {/* Earnings + Deductions tables */}
                 <div className="grid-2" style={{ marginTop: 18 }}>
-                    
-                    {/* Earnings */}
-                    <div>
-                        <div style={{ fontWeight: 700, marginBottom: 10 }}>Earnings</div>
-
-                        <div style={{ border: "1px solid var(--border)", borderRadius: 8, overflow: "hidden" }}>
-                            <table className="table" style={{ margin: 0 }}>
-                                <thead>
-                                    <tr>
-                                        <th>DESCRIPTION</th>
-                                        <th style={{ textAlign: "right" }}>AMOUNT (Rs)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {/* Basic Salary (Separate line) */}
-                                    <tr>
-                                        <td>Basic Salary</td>
-                                        <td style={{ textAlign: "right" }}>{fmt(basicSalary)}</td>
-                                    </tr>
-                                    
-                                    {/* Other Earnings (Allowances, OT, Bonus) */}
-                                    {earningsList.length === 0 && basicSalary === 0 && (
-                                        <tr><td colSpan={2} style={{ color: "var(--muted)", textAlign: "center" }}>No recorded earnings this month.</td></tr>
-                                    )}
-                                    {earningsList.map((row, index) => (
-                                        <tr key={index}>
-                                            <td>{row.name || row.reason || row.type}</td>
-                                            <td style={{ textAlign: "right" }}>{fmt(row.amount)}</td>
-                                        </tr>
-                                    ))}
-                                    
-                                    <tr>
-                                        <td style={{ fontWeight: 800 }}>Total Gross Earnings</td>
-                                        <td style={{ textAlign: "right", fontWeight: 800 }}>{fmt(totalEarnings)}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                  <div>
+                    <div style={{ fontWeight: 700, marginBottom: 10 }}>Earnings</div>
+                    <div style={{ border: "1px solid var(--border)", borderRadius: 8, overflow: "hidden" }}>
+                      <table className="table" style={{ margin: 0 }}>
+                        <thead>
+                          <tr>
+                            <th>DESCRIPTION</th>
+                            <th style={{ textAlign: "right" }}>AMOUNT</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {earnings.map((row) => (
+                            <tr key={row.desc}>
+                              <td>{row.desc}</td>
+                              <td style={{ textAlign: "right" }}>{fmt(row.amount)}</td>
+                            </tr>
+                          ))}
+                          <tr>
+                            <td style={{ fontWeight: 800 }}>Total Earnings</td>
+                            <td style={{ textAlign: "right", fontWeight: 800 }}>{fmt(totalEarnings)}</td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
+                  </div>
 
-                    {/* Deductions */}
-                    <div>
-                        <div style={{ fontWeight: 700, marginBottom: 10 }}>Deductions</div>
-
-                        <div style={{ border: "1px solid var(--border)", borderRadius: 8, overflow: "hidden" }}>
-                            <table className="table" style={{ margin: 0 }}>
-                                <thead>
-                                    <tr>
-                                        <th>DESCRIPTION</th>
-                                        <th style={{ textAlign: "right" }}>AMOUNT (Rs)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {deductionsList.length === 0 && (
-                                        <tr><td colSpan={2} style={{ color: "var(--muted)", textAlign: "center" }}>No recorded deductions this month.</td></tr>
-                                    )}
-                                    {deductionsList.map((row, index) => (
-                                        <tr key={index}>
-                                            <td>{row.name}</td>
-                                            <td style={{ textAlign: "right", color: 'var(--danger)' }}>{fmt(row.amount)}</td>
-                                        </tr>
-                                    ))}
-                                    <tr>
-                                        <td style={{ fontWeight: 800 }}>Total Deductions</td>
-                                        <td style={{ textAlign: "right", fontWeight: 800, color: 'var(--danger)' }}>{fmt(totalDeductions)}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        {/* Employer Contributions (EPF/ETF) */}
-                        <div style={{ fontWeight: 700, marginTop: 20, marginBottom: 10 }}>Employer Contributions (Not Deducted)</div>
-                        <div style={{ border: "1px solid var(--border)", borderRadius: 8, overflow: "hidden" }}>
-                            <table className="table" style={{ margin: 0 }}>
-                                <tbody>
-                                    <tr>
-                                        <td>Employer EPF Contribution (12%)</td>
-                                        <td style={{ textAlign: "right" }}>{fmt(payroll.totals.employerEPF || 0)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Employer ETF Contribution (3%)</td>
-                                        <td style={{ textAlign: "right" }}>{fmt(payroll.totals.employerETF || 0)}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        
+                  <div>
+                    <div style={{ fontWeight: 700, marginBottom: 10 }}>Deductions</div>
+                    <div style={{ border: "1px solid var(--border)", borderRadius: 8, overflow: "hidden" }}>
+                      <table className="table" style={{ margin: 0 }}>
+                        <thead>
+                          <tr>
+                            <th>DESCRIPTION</th>
+                            <th style={{ textAlign: "right" }}>AMOUNT</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {deductions.map((row) => (
+                            <tr key={row.desc}>
+                              <td>{row.desc}</td>
+                              <td style={{ textAlign: "right" }}>{fmt(row.amount)}</td>
+                            </tr>
+                          ))}
+                          <tr>
+                            <td style={{ fontWeight: 800 }}>Total Deduction</td>
+                            <td style={{ textAlign: "right", fontWeight: 800 }}>{fmt(totalDeductionsSummary)}</td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
+                  </div>
                 </div>
-                
-                {/* Footer net pay */}
+
+                {/* Footer */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 18 }}>
-                    <div style={{ fontSize: 22, fontWeight: 900, color: "var(--success)" }}>
-                        Net Pay: {fmt(netPay)}
-                    </div>
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <button className="btn btn-soft" onClick={handlePrint}>🖨 Print</button>
+                    <button className="btn btn-soft" onClick={handleDownload}>⬇ Download</button>
+                  </div>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: "green" }}>
+                    Net Pay: {fmt(netPay)}
+                  </div>
                 </div>
+              </div>
             </div>
-        </div>
-    );
-
-
-    return (
-        <Layout>
-            <PageHeader breadcrumb={["Salary & Compensation", "Generate Pay Slip"]} title="Generate Pay Slip" />
-
-            <div className="card" style={{ padding: 24 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16 }}>
-                    
-                    {/* Left: Selection Options */}
-                    <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Selection Options</div>
-                        <div style={{ color: "var(--muted)", fontSize: 13, marginBottom: 16 }}>
-                            Select employee and month to generate the pay slip.
-                        </div>
-
-                        {/* Mode button for consistency */}
-                        <div style={{ display: "flex", justifyContent: "flex-start", gap: 10, marginBottom: 14 }}>
-                            <button type="button" className="btn btn-primary" style={{ cursor: 'default' }}>
-                                Employee Mode
-                            </button>
-                        </div>
-
-                        {/* Filters row: Employee + Department + Month */}
-                        <div className="grid-3" style={{ gap: 16 }}>
-                            {/* Employee */}
-                            <div>
-                                <div style={{ fontSize: 12, color: "var(--muted)", marginBottom: 6 }}>Select Employee</div>
-                                <select
-                                    className="select"
-                                    value={selectedEmployeeId}
-                                    onChange={(e) => setSelectedEmployeeId(e.target.value)}
-                                    disabled={loading || !filteredEmployees.length}
-                                >
-                                    {loading && <option value="">Loading...</option>}
-                                    {!loading && !filteredEmployees.length && <option value="">No Employees</option>}
-                                    {filteredEmployees.map((e) => (
-                                        <option key={e.id} value={e.id}>
-                                            {e.name} ({e.department})
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            {/* Department */}
-                            <div>
-                                <div style={{ fontSize: 12, color: "var(--muted)", marginBottom: 6 }}>Filter by Department</div>
-                                <select
-                                    className="select"
-                                    value={selectedDepartmentId}
-                                    onChange={(e) => setSelectedDepartmentId(e.target.value)}
-                                    disabled={loading}
-                                >
-                                    <option value="">All Departments</option>
-                                    {departments.map((d) => (
-                                        <option key={d.id} value={d.id}>
-                                            {d.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            {/* Month */}
-                            <div>
-                                <div style={{ fontSize: 12, color: "var(--muted)", marginBottom: 6 }}>Select Month</div>
-                                <input
-                                    className="input"
-                                    type="month"
-                                    value={selectedMonth}
-                                    onChange={(e) => setSelectedMonth(e.target.value)}
-                                    disabled={loading}
-                                />
-                            </div>
-                        </div>
-
-                        <div style={{ marginTop: 18 }}>
-                            <button 
-                                className="btn btn-primary" 
-                                onClick={handleGeneratePayslip} 
-                                disabled={!selectedEmployeeId || loading || !selectedMonth}
-                            >
-                                {loading ? 'Processing...' : '📄 Generate Pay slip'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Review + Actions */}
-                <div style={{ marginTop: 24 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-                        <div style={{ fontSize: 18, fontWeight: 700 }}>Pay Slip Review</div>
-
-                        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                            <button className="btn btn-soft" onClick={handlePrint} disabled={!generated}>
-                                🖨 Print
-                            </button>
-                            <button className="btn btn-soft" onClick={handleDownloadAsPDF} disabled={!generated}>
-                                ⬇ Download as PDF
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Payslip Card */}
-                    <div className="card" style={{ margin: "14px 0 0 0", padding: 0, overflow: "hidden" }}>
-                        {generated && payslipData ? (
-                            <PayslipContent />
-                        ) : (
-                            <div style={{ padding: 30, textAlign: 'center', color: 'var(--muted)' }}>
-                                {loading ? 'Loading payroll data...' : 'Select criteria and click "Generate Pay slip" to view the payslip.'}
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-        </Layout>
-    );
+          </div>
+        )}
+      </div>
+    </Layout>
+  );
 };
 
 export default GeneratePaySlip;

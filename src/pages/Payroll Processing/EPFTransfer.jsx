@@ -79,7 +79,7 @@ export default function EPFTransfer() {
     <Layout>
       {/* ================= PAGE HEADER ================= */}
       <PageHeader
-        breadcrumb={["Payroll", "Payroll Processing & Disbursement", "EPF Transfer"]}
+        breadcrumb={["Payroll", "EPF Transfer"]}
         title="Payroll Processing & Disbursement"
       />
 
@@ -161,11 +161,12 @@ export default function EPFTransfer() {
 
           <div className="grid-3">
             <button
-              className="btn btn-primary"
-              onClick={() => setShowProcessModal(true)}
-            >
-              Process EPF Transfer
-            </button>
+  className="btn btn-primary"
+  onClick={() => navigate("/process-epf-transfer")}
+>
+  Process EPF Transfer
+</button>
+
 
             <button className="btn btn-soft">Generate EPF Report</button>
 
