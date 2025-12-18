@@ -105,7 +105,7 @@ const PayrollProcessing = () => {
               className="btn btn-primary"
               onClick={() => navigate("/process-payroll")}
             >
-              Process Payroll
+              Process Salary Transfer
             </button>
 
             <button

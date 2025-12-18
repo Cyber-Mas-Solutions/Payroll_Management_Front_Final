@@ -8,7 +8,7 @@ const ConfirmEPFTransfer = () => {
   const navigate = useNavigate();
 
   const finish = () => {
-    navigate("/"); // Redirect to dashboard
+    navigate("/"); 
   };
 
   return (
@@ -18,27 +18,31 @@ const ConfirmEPFTransfer = () => {
         title="Confirm EPF Transfer"
       />
 
+      {/* 1. MAIN WRAPPER: Now Flex and Centered */}
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "2fr 1fr",
+          display: "flex",
+          justifyContent: "center",
           gap: 24,
-          margin: "0 24px",
-          alignItems: "start",
+          padding: "0 24px",
+          alignItems: "flex-start",
+          maxWidth: "1400px", // Allows room for both panels while remaining centered
+          margin: "0 auto"
         }}
       >
         {/* ================= LEFT PANEL ================= */}
-        <div>
-          <div className="card" style={{ padding: 24, borderRadius: 20 }}>
-            <p style={{ color: "var(--muted)", marginBottom: 24, fontSize: 14 }}>
+        <div style={{ width: "100%", maxWidth: "900px" }}> 
+      <div className="card" style={{ padding: 30 }}>
+        <p style={{ color: "var(--muted)", marginBottom: 24, textAlign: 'center' }}>
               Complete the steps below to finalize EPF transfers for your employees.
             </p>
 
-            {/* STEP TABS */}
+            {/* 2. STEP TABS: Now Centered with consistent Gaps */}
             <div
               style={{
                 display: "flex",
-                gap: 24,
+                justifyContent: "center", // Centered
+                gap: "40px",              // Consistent gap
                 fontSize: 14,
                 fontWeight: 600,
                 borderBottom: "1px solid var(--border)",
@@ -46,10 +50,18 @@ const ConfirmEPFTransfer = () => {
                 marginBottom: 24,
               }}
             >
-              <span style={{ color: "var(--muted)" }}>Select Month</span>
-              <span style={{ color: "var(--muted)" }}>Load EPF Employee Data</span>
-              <span style={{ color: "var(--muted)" }}>Review EPF Calculations</span>
-              <span style={{ color: "#10B981", borderBottom: "2px solid #10B981", paddingBottom: 12 }}>
+              <span style={{ color: "var(--muted)", whiteSpace: "nowrap" }}>Select Month</span>
+              <span style={{ color: "var(--muted)", whiteSpace: "nowrap" }}>Load EPF Employee Data</span>
+              <span style={{ color: "var(--muted)", whiteSpace: "nowrap" }}>Review EPF Calculations</span>
+              <span 
+                style={{ 
+                  color: "#0c0c0cff", 
+                  borderBottom: "2px solid #0c0c0cff", 
+                  paddingBottom: 14,
+                  marginBottom: -15, // Aligns perfectly with the border
+                  whiteSpace: "nowrap" 
+                }}
+              >
                 Confirm EPF Transfer
               </span>
             </div>
@@ -64,12 +76,11 @@ const ConfirmEPFTransfer = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 textAlign: "center",
-                background: "#F0FDF4",
+                background: "#fcfcfcff",
                 borderRadius: 16,
                 border: "1px dashed #BBF7D0"
               }}
             >
-              {/* Centered success icon */}
               <div style={{ 
                 marginBottom: 24, 
                 background: "#DCFCE7", 
@@ -122,60 +133,7 @@ const ConfirmEPFTransfer = () => {
           </div>
         </div>
 
-        {/* ================= RIGHT SUMMARY PANEL ================= */}
-        <div>
-          <div className="card" style={{ padding: 32, borderRadius: 32, border: "1px solid #E5E7EB" }}>
-            <h3 style={{ fontWeight: 500, fontSize: 22, marginBottom: 32, color: "#868585ff" }}>
-              EPF Transfer Summary
-            </h3>
-
-            {/* Total Employees */}
-            <div style={{ background: "#EEF2FF", padding: "24px", borderRadius: "16px", display: "flex", alignItems: "center", gap: "20px", marginBottom: "20px" }}>
-              <div style={{ color: "#4F46E5", fontSize: "28px", display: "flex" }}><FiUsers /></div>
-              <div>
-                <p style={{ color: "#4F46E5", fontWeight: 600, fontSize: 15, margin: "0 0 4px 0" }}>Total Employees</p>
-                <h1 style={{ fontSize: 20, fontWeight: 500, margin: 0, color: "#4F46E5" }}>127</h1>
-              </div>
-            </div>
-
-            {/* Total EPF */}
-            <div style={{ background: "#DCFCE7", padding: "24px", borderRadius: "16px", display: "flex", alignItems: "center", gap: "20px", marginBottom: "20px" }}>
-              <div style={{ color: "#16A34A", fontSize: "28px", display: "flex" }}><FiBriefcase /></div>
-              <div>
-                <p style={{ color: "#16A34A", fontWeight: 600, fontSize: 15, margin: "0 0 4px 0" }}>Total EPF Amount</p>
-                <h1 style={{ fontSize: 20, fontWeight: 500, margin: 0, color: "#16A34A" }}>Rs. 4,088,000</h1>
-              </div>
-            </div>
-
-            {/* Pending */}
-            <div style={{ background: "#FFEDD5", padding: "24px", borderRadius: "16px", display: "flex", alignItems: "center", gap: "20px" }}>
-              <div style={{ color: "#EA580C", fontSize: "24px", display: "flex" }}><FiInfo /></div>
-              <div>
-                <p style={{ color: "#EA580C", fontWeight: 600, fontSize: 15, margin: "0 0 4px 0" }}>Pending Employees</p>
-                <h1 style={{ fontSize: 20, fontWeight: 500, margin: 0, color: "#EA580C" }}>0</h1>
-              </div>
-            </div>
-
-            <hr style={{ margin: "36px 0", border: "none", borderTop: "1px solid #E5E7EB" }} />
-
-            <p style={{ fontWeight: 600, fontSize: 18, color: "#9CA3AF", marginBottom: 16 }}>Processing Status</p>
-
-            <div style={{ height: 10, background: "#E5E7EB", borderRadius: 10, overflow: "hidden" }}>
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  background: "#4632f5ff", // Success green bar for final step
-                  borderRadius: 10,
-                }}
-              />
-            </div>
-
-            <p style={{ fontSize: 12, marginTop: 14, color: "#10B981", fontWeight: 500 }}>
-              Process Complete ✓
-            </p>
-          </div>
-        </div>
+        
       </div>
     </Layout>
   );

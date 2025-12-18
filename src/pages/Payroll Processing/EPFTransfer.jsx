@@ -108,6 +108,7 @@ export default function EPFTransfer() {
             <div style={{ fontSize: 24, fontWeight: 700 }}>
               Rs. {totalEmployer.toLocaleString()}
             </div>
+            <small style={{ color: "green" }}>↑ 3.2% Last month</small>
           </div>
 
           <div className="card" style={{ margin: 0 }}>
@@ -117,6 +118,7 @@ export default function EPFTransfer() {
             <div style={{ fontSize: 24, fontWeight: 700 }}>
               Rs. {totalEmployee.toLocaleString()}
             </div>
+            <small style={{ color: "green" }}>↑ 2.8% Last month</small>
           </div>
 
           <div className="card" style={{ margin: 0 }}>
@@ -126,6 +128,7 @@ export default function EPFTransfer() {
             <div style={{ fontSize: 24, fontWeight: 700 }}>
               Rs. {totalAmount.toLocaleString()}
             </div>
+            <small style={{ color: "red" }}>↑ 4.5% Last month</small>
           </div>
         </div>
 

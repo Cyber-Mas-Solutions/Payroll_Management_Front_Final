@@ -70,8 +70,12 @@ const Sidebar = () => {
   ]
 
   const administrativePaths = [
-    '/administrative', '/administrative/departments', '/administrative/shifts',
-    '/administrative/holidays', '/administrative/announcements', '/administrative/roles'
+    '/administrative', 
+    '/administrative/departments', 
+    '/administrative/shifts',
+    '/administrative/holidays', 
+    '/administrative/announcements', 
+    '/administrative/roles'
   ];
 
   const payrollprocessingPaths = [
@@ -80,10 +84,29 @@ const Sidebar = () => {
     '/process-payroll/load-data', 
     '/process-payroll/review-salary', 
     '/process-payroll/finalize-payroll', 
-    'process-payroll/confirm-processing',
-    'generate-pay-slip',
-    'employee-salary-details',
+    '/process-payroll/confirm-processing',
+    '/generate-pay-slip',
+    '/employee-salary-details',
+    '/process-payroll/load-data',
+    '/epf-transfer',
+    '/process-epf-transfer',
+    '/process-epf-transfer/review',
+    '/process-epf-transfer/confirm',
+    '/process-epf/confirm-transfer',
+
   ];
+
+  const securityaccesscontrolPaths = [
+    '/security-access-control',
+    '/user-management',
+    '/add-user',
+    '/edit-user',
+    '/role-management',
+    '/access-control',
+    '/audit-logs',
+    '/audit-log/:id',
+
+];
 
   const getActiveItem = () => {
     const currentPath = location.pathname;
@@ -91,7 +114,9 @@ const Sidebar = () => {
     if (salaryCompensationPaths.some(p => currentPath.startsWith(p))) return 'salary-compensation';
     if (employeeInfoPaths.some(p => currentPath.startsWith(p))) return 'employee-information';
     if (timeAttendancePaths.some(p => currentPath.startsWith(p))) return 'time-attendance';
+    if (payrollprocessingPaths.some(p => currentPath.startsWith(p))) return 'payroll-processing';
     if (reportAnalyticsPath.some(p => currentPath.startsWith(p))) return 'report-analytics';
+    if (securityaccesscontrolPaths.some(p => currentPath.startsWith(p))) return 'security-access-control';
 
     return menuItems.find(item => currentPath === item.path)?.id || 'dashboard';
   };

@@ -321,13 +321,13 @@ const transformPayrollData = (apiResponse) => {
           >
             {loading ? 'Loading...' : '📄 Generate Payslip'}
           </button>
-          <button 
+          {/*<button 
             className="btn btn-soft"
             onClick={handleProcessTransfer}
             disabled={!selectedEmployeeId || !selectedMonth}
           >
             💰 Process Salary Transfer
-          </button>
+          </button>*/}
         </div>
 
         {/* ================= PAYSLIP REVIEW ================= */}

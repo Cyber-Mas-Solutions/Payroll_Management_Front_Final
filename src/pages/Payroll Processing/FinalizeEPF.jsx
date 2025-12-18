@@ -122,11 +122,11 @@ const FinalizeEPF = () => {
               >
                 <input
                   type="checkbox"
-                  style={{ width: 18, height: 18 }}
                   checked={agree}
                   onChange={(e) => setAgree(e.target.checked)}
                 />
-                I confirm that all EPF information is correct and I want to finalize this transfer.
+                I confirm that all information is correct and I want to process
+                payroll
               </label>
             </div>
 
