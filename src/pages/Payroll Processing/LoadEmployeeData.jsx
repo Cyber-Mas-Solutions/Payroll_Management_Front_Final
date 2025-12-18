@@ -1,12 +1,11 @@
-// src/pages/LoadEmployeeData.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../../components/Layout";
 import PageHeader from "../../components/PageHeader";
-import { FiCheckCircle, FiClock } from "react-icons/fi";
+import { FiCheckCircle, FiClock, FiUsers, FiBriefcase, FiInfo } from "react-icons/fi";
 
 const LoadEmployeeData = () => {
-   const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const employees = [
     { id: "0001", name: "Rashmi Samadara", dept: "HR", status: "Processed" },
     { id: "0005", name: "Janith Perera", dept: "Finance", status: "Processed" },
@@ -22,23 +21,18 @@ const LoadEmployeeData = () => {
       />
 
       <div
-        className="grid"
         style={{
           display: "grid",
           gridTemplateColumns: "2fr 1fr",
-          gap: "16px",
+          gap: 24,
           margin: "0 24px",
+          alignItems: "start",
         }}
       >
-        {/* LEFT SIDE */}
+        {/* ================= LEFT SIDE ================= */}
         <div>
-          <div className="card" style={{ padding: 24 }}>
-
-            {/* Title */}
-            <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>
-              Process Payroll
-            </h2>
-            <p style={{ color: "var(--muted)", marginBottom: 24 }}>
+          <div className="card" style={{ padding: 24, borderRadius: 20 }}>
+            <p style={{ color: "var(--muted)", marginBottom: 24, fontSize: 14 }}>
               Complete the steps below to process payroll for your employees.
             </p>
 
@@ -55,81 +49,76 @@ const LoadEmployeeData = () => {
               }}
             >
               <span style={{ color: "var(--muted)" }}>Select Month</span>
-              <span style={{ color: "#000", borderBottom: "2px solid #000" }}>
+              <span style={{ color: "#4F46E5", borderBottom: "2px solid #4F46E5", paddingBottom: 12 }}>
                 Load Employee Data
               </span>
-              <span style={{ color: "var(--muted)" }}>
-                Review Salary Calculations
-              </span>
+              <span style={{ color: "var(--muted)" }}>Review Salary Calculations</span>
               <span style={{ color: "var(--muted)" }}>Confirm Processing</span>
             </div>
 
             {/* Status Alert */}
             <div
-              className="card"
               style={{
-                padding: 16,
-                background: "#e9f2ff",
-                borderColor: "#bcd7ff",
-                color: "#1952a3",
+                padding: "16px 20px",
+                background: "#EEF2FF",
+                borderRadius: 12,
+                border: "1px solid #C7D2FE",
+                color: "#4338CA",
                 marginBottom: 24,
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <FiCheckCircle size={18} />
-                <strong>Data Loaded Successfully</strong>
+                <FiCheckCircle size={20} />
+                <strong style={{ fontSize: 15 }}>Data Loaded Successfully</strong>
               </div>
-              <p style={{ fontSize: 13, marginTop: 6 }}>
+              <p style={{ fontSize: 13, marginTop: 4, marginLeft: 30, opacity: 0.8 }}>
                 127 employees found for April 2025
               </p>
             </div>
 
             {/* Table Title */}
-            <h3 style={{ marginBottom: 12, fontWeight: 600 }}>
-              Load Employee Data
+            <h3 style={{ marginBottom: 16, fontWeight: 700, fontSize: 18 }}>
+              Employee Payroll Records
             </h3>
 
             {/* TABLE */}
-            <table className="table" style={{ marginBottom: 10 }}>
-              <thead>
-                <tr>
-                  <th>EMPLOYEE</th>
-                  <th>DEPARTMENT</th>
-                  <th>STATUS</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {employees.map((emp) => (
-                  <tr key={emp.id}>
-                    <td>
-                      <strong>{emp.name}</strong>
-                      <div style={{ fontSize: 12, color: "var(--muted)" }}>
-                        ID: {emp.id}
-                      </div>
-                    </td>
-
-                    <td>{emp.dept}</td>
-
-                    <td style={{ fontWeight: 600 }}>
-                      {emp.status === "Processed" ? (
-                        <span style={{ color: "var(--success)", display: "flex", alignItems: "center", gap: 5 }}>
-                          <FiCheckCircle /> Processed
-                        </span>
-                      ) : (
-                        <span style={{ color: "#d97706", display: "flex", alignItems: "center", gap: 5 }}>
-                          <FiClock /> Pending
-                        </span>
-                      )}
-                    </td>
+            <div className="table-responsive">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th style={{ background: "#F9FAFB" }}>EMPLOYEE</th>
+                    <th style={{ background: "#F9FAFB" }}>DEPARTMENT</th>
+                    <th style={{ background: "#F9FAFB" }}>STATUS</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {employees.map((emp) => (
+                    <tr key={emp.id}>
+                      <td style={{ padding: "16px 12px" }}>
+                        <div style={{ fontWeight: 600, color: "#111827" }}>{emp.name}</div>
+                        <div style={{ fontSize: 12, color: "#6B7280" }}>ID: {emp.id}</div>
+                      </td>
+                      <td style={{ verticalAlign: "middle" }}>{emp.dept}</td>
+                      <td style={{ verticalAlign: "middle" }}>
+                        {emp.status === "Processed" ? (
+                          <span style={{ color: "#16A34A", display: "flex", alignItems: "center", gap: 6, fontWeight: 600 }}>
+                            <FiCheckCircle /> Processed
+                          </span>
+                        ) : (
+                          <span style={{ color: "#EA580C", display: "flex", alignItems: "center", gap: 6, fontWeight: 600 }}>
+                            <FiClock /> Pending
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
             {/* Footer Row */}
-            <p style={{ fontSize: 12, color: "var(--muted)", margin: "12px 0" }}>
-              Showing 4 of 127 employees
+            <p style={{ fontSize: 13, color: "#6B7280", margin: "16px 0" }}>
+              Showing <strong>4</strong> of 127 employees
             </p>
 
             {/* Navigation Buttons */}
@@ -137,100 +126,69 @@ const LoadEmployeeData = () => {
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                marginTop: 20,
+                marginTop: 24,
+                paddingTop: 20,
+                borderTop: "1px solid #F3F4F6",
               }}
             >
-              <button className="btn btn-soft"
-              onClick={() => navigate("/process-payroll")}
-              >‹ Back</button>
-             <button
-              className="btn btn-primary"
-              onClick={() =>
-                navigate("/process-payroll/review-salary")
-              }
-            >
-              Next ▶
-            </button>
+              <button className="btn btn-soft" onClick={() => navigate("/process-payroll")}>
+                ‹ Back
+              </button>
+              <button className="btn btn-primary" onClick={() => navigate("/process-payroll/review-salary")}>
+                Next ▶
+              </button>
             </div>
-
           </div>
         </div>
 
-        {/* RIGHT SUMMARY (same as previous page) */}
+        {/* ================= RIGHT SUMMARY ================= */}
         <div>
-          <div
-            className="card"
-            style={{
-              borderRadius: 16,
-              padding: 28,
-              height: "fit-content",
-            }}
-          >
-            <h3 style={{ fontWeight: 700, fontSize: 18 }}>Payroll Summary</h3>
+          <div className="card" style={{ padding: 32, borderRadius: 32, border: "1px solid #E5E7EB" }}>
+            <h3 style={{ fontWeight: 800, fontSize: 24, marginBottom: 32, color: "#000" }}>
+              Payroll Summary
+            </h3>
 
-            <div
-              className="card"
-              style={{
-                background: "#E8F0FF",
-                border: "none",
-                padding: 20,
-                borderRadius: 12,
-                marginTop: 20,
-              }}
-            >
-              <p style={{ color: "#3B82F6", fontWeight: 600 }}>Total Employees</p>
-              <h1 style={{ fontSize: 26 }}>127</h1>
+            {/* Total Employees */}
+            <div style={{ background: "#EEF2FF", padding: "24px", borderRadius: "16px", display: "flex", alignItems: "center", gap: "20px", marginBottom: "20px" }}>
+              <div style={{ color: "#4F46E5", fontSize: "28px", display: "flex" }}>
+                <FiUsers />
+              </div>
+              <div>
+                <p style={{ color: "#4F46E5", fontWeight: 600, fontSize: 15, margin: "0 0 4px 0" }}>Total Employees</p>
+                <h1 style={{ fontSize: 20, fontWeight: 500, margin: 0, color: "#4F46E5" }}>127</h1>
+              </div>
             </div>
 
-            <div
-              className="card"
-              style={{
-                background: "#D9FCE1",
-                border: "none",
-                padding: 20,
-                borderRadius: 12,
-                margin: "20px 0",
-              }}
-            >
-              <p style={{ color: "#059669", fontWeight: 600 }}>Total Salary</p>
-              <h1 style={{ fontSize: 26 }}>$42,542,000</h1>
+            {/* Total Salary */}
+            <div style={{ background: "#DCFCE7", padding: "24px", borderRadius: "16px", display: "flex", alignItems: "center", gap: "20px", marginBottom: "20px" }}>
+              <div style={{ color: "#16A34A", fontSize: "28px", display: "flex" }}>
+                <FiBriefcase />
+              </div>
+              <div>
+                <p style={{ color: "#16A34A", fontWeight: 600, fontSize: 15, margin: "0 0 4px 0" }}>Total Salary</p>
+                <h1 style={{ fontSize: 20, fontWeight: 500, margin: 0, color: "#16A34A" }}>$42,542,000</h1>
+              </div>
             </div>
 
-            <div
-              className="card"
-              style={{
-                background: "#FFF5D6",
-                border: "none",
-                padding: 20,
-                borderRadius: 12,
-              }}
-            >
-              <p style={{ color: "#D97706", fontWeight: 600 }}>Pending Cases</p>
-              <h1 style={{ fontSize: 26 }}>27</h1>
+            {/* Pending Cases */}
+            <div style={{ background: "#FFEDD5", padding: "24px", borderRadius: "16px", display: "flex", alignItems: "center", gap: "20px" }}>
+              <div style={{ color: "#EA580C", fontSize: "24px", display: "flex" }}>
+                <FiInfo />
+              </div>
+              <div>
+                <p style={{ color: "#EA580C", fontWeight: 600, fontSize: 15, margin: "0 0 4px 0" }}>Pending Cases</p>
+                <h1 style={{ fontSize: 20, fontWeight: 500, margin: 0, color: "#EA580C" }}>27</h1>
+              </div>
             </div>
 
-            <hr style={{ margin: "28px 0" }} />
+            <hr style={{ margin: "36px 0", border: "none", borderTop: "1px solid #E5E7EB" }} />
 
-            <strong>Processing Status</strong>
-            <div
-              style={{
-                height: 8,
-                background: "#E5E7EB",
-                borderRadius: 6,
-                marginTop: 8,
-              }}
-            >
-              <div
-                style={{
-                  width: "50%",
-                  height: "100%",
-                  background: "#6366F1",
-                  borderRadius: 6,
-                }}
-              ></div>
+            <p style={{ fontWeight: 600, fontSize: 13, color: "#9CA3AF", marginBottom: 16 }}>Processing Status</p>
+            <div style={{ height: 10, background: "#E5E7EB", borderRadius: 10, overflow: "hidden" }}>
+              <div style={{ width: "50%", height: "100%", background: "#4F46E5", borderRadius: 10 }} />
             </div>
 
-            <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 8 }}>
+            <p style={{ fontSize: 14, marginTop: 14, color: "#9CA3AF", fontWeight: 500 }}>
               Step 2 of 4 completed
             </p>
           </div>
@@ -241,4 +199,3 @@ const LoadEmployeeData = () => {
 };
 
 export default LoadEmployeeData;
-

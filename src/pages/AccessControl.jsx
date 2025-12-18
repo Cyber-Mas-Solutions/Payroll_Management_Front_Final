@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 
-
 const AccessControl = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -113,12 +112,13 @@ const AccessControl = () => {
             <p className="subtitle">Manage role-based permissions for system access</p>
           </div>
 
-          {/* Tabs */}
-          <div className="card" style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
+          {/* ================= TABS ================= */}
+          <div className="card" style={{ display: "flex", gap: "8px", marginBottom: "16px", flexWrap: "wrap" }}>
             {tabs.map((t) => (
               <button
                 key={t.path}
-                className={`btn btn-soft ${location.pathname === t.path ? "btn-primary" : ""}`}
+                /* Updated logic: btn-primary for white font on active tab */
+                className={`btn ${location.pathname === t.path ? "btn-primary" : "btn-soft"}`}
                 onClick={() => navigate(t.path)}
               >
                 {t.label}
@@ -128,10 +128,10 @@ const AccessControl = () => {
 
           {/* Permission Matrix */}
           <div className="card">
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px", alignItems: "center" }}>
               <div>
-                <h3 className="section-title">Role Permissions</h3>
-                <p>Configure what each role can access and modify.</p>
+                <h3 style={{ fontSize: "16px", fontWeight: 700 }}>Role Permissions</h3>
+                <p style={{ fontSize: "13px", color: "var(--muted)" }}>Configure what each role can access and modify.</p>
               </div>
               <button className="btn btn-primary" onClick={() => setShowPermissionModal(true)}>
                 + Add Permission
@@ -141,17 +141,17 @@ const AccessControl = () => {
             <table className="table">
               <thead>
                 <tr>
-                  <th>Permission / Role</th>
-                  <th>HR</th>
-                  <th>Finance</th>
-                  <th>Employee</th>
-                  <th>Auditor</th>
+                  <th style={{ width: "40%" }}>Permission / Role</th>
+                  <th style={{ textAlign: "center" }}>HR</th>
+                  <th style={{ textAlign: "center" }}>Finance</th>
+                  <th style={{ textAlign: "center" }}>Employee</th>
+                  <th style={{ textAlign: "center" }}>Auditor</th>
                 </tr>
               </thead>
               <tbody>
                 {permissions.map((p, i) => (
                   <tr key={i}>
-                    <td>{p.name}</td>
+                    <td><span style={{ fontWeight: 600 }}>{p.name}</span></td>
                     {["hr", "finance", "employee", "auditor"].map((role) => (
                       <td key={role} style={{ textAlign: "center" }}>
                         <label className="switch small">
@@ -169,22 +169,22 @@ const AccessControl = () => {
               </tbody>
             </table>
 
-            <div style={{ textAlign: "right", marginTop: "12px" }}>
+            <div style={{ textAlign: "right", marginTop: "20px" }}>
               <button className="btn btn-primary" onClick={handleSave}>
                 Save Changes
               </button>
             </div>
           </div>
 
-          {/* Role Management */}
+          {/* Role Management List */}
           <div className="card">
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px", alignItems: "center" }}>
               <div>
-                <h3 className="section-title">Role Management</h3>
-                <p>Create and modify system roles.</p>
+                <h3 style={{ fontSize: "16px", fontWeight: 700 }}>Role Definitions</h3>
+                <p style={{ fontSize: "13px", color: "var(--muted)" }}>Create and modify system roles.</p>
               </div>
-              <button className="btn btn-primary" onClick={() => setShowRoleModal(true)}>
-                + Add New Role
+              <button className="btn btn-soft" onClick={() => setShowRoleModal(true)}>
+                + New Role
               </button>
             </div>
 
@@ -195,107 +195,89 @@ const AccessControl = () => {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  borderBottom: "1px solid #eee",
-                  padding: "8px 0",
+                  borderBottom: "1px solid var(--border)",
+                  padding: "12px 0",
                 }}
               >
                 <div>
-                  <strong>{r.name}</strong>
-                  <p style={{ margin: "4px 0", color: "#666", fontSize: "13px" }}>{r.desc}</p>
+                  <div style={{ fontWeight: 700, color: "var(--text)" }}>{r.name}</div>
+                  <div style={{ fontSize: "12px", color: "var(--muted)" }}>{r.desc}</div>
                 </div>
-                <div>
-                  <button className="btn btn-soft" onClick={() => handleEditRole(i)}>
-                    Edit
-                  </button>{" "}
-                  <button className="btn btn-soft" style={{ color: "red" }} onClick={() => handleDeleteRole(i)}>
-                    Delete
-                  </button>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <button className="btn btn-soft" onClick={() => handleEditRole(i)}>Edit</button>
+                  <button className="btn btn-soft" style={{ color: "var(--danger)" }} onClick={() => handleDeleteRole(i)}>Delete</button>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* === Add Permission Modal === */}
+          {/* ================= MODALS ================= */}
+          
+          {/* Add Permission Modal */}
           {showPermissionModal && (
-            <div className="modal-overlay">
-              <div className="modal-content">
-                <h2>Add New Permission</h2>
+            <div className="modal-backdrop">
+              <div className="modal" style={{ maxWidth: "450px" }}>
+                <h2 style={{ marginBottom: "16px" }}>Add New Permission</h2>
                 <form onSubmit={handleAddPermission}>
-                  <label>
-                    Permission Name
-                    <input
-                      className="input"
-                      value={newPermission.name}
-                      onChange={(e) => setNewPermission({ ...newPermission, name: e.target.value })}
-                      required
-                    />
-                  </label>
+                  <label>Permission Name</label>
+                  <input
+                    className="input"
+                    value={newPermission.name}
+                    onChange={(e) => setNewPermission({ ...newPermission, name: e.target.value })}
+                    required
+                  />
 
-                  <label>
-                    Assign to Roles:
-                    <div style={{ display: "flex", gap: "12px", marginTop: "6px" }}>
-                      {["hr", "finance", "employee", "auditor"].map((r) => (
-                        <label key={r}>
-                          <input
-                            type="checkbox"
-                            checked={newPermission[r]}
-                            onChange={() =>
-                              setNewPermission({ ...newPermission, [r]: !newPermission[r] })
-                            }
-                          />{" "}
-                          {r.toUpperCase()}
-                        </label>
-                      ))}
-                    </div>
-                  </label>
+                  <label style={{ marginTop: "16px", display: "block" }}>Assign Initial Access:</label>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "8px" }}>
+                    {["hr", "finance", "employee", "auditor"].map((r) => (
+                      <label key={r} style={{ display: "flex", alignItems: "center", gap: "8px", fontWeight: 500 }}>
+                        <input
+                          type="checkbox"
+                          checked={newPermission[r]}
+                          onChange={() => setNewPermission({ ...newPermission, [r]: !newPermission[r] })}
+                        />
+                        {r.toUpperCase()} Access
+                      </label>
+                    ))}
+                  </div>
 
-                  <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "16px" }}>
-                    <button type="button" className="btn btn-soft" onClick={() => setShowPermissionModal(false)}>
-                      Cancel
-                    </button>
-                    <button type="submit" className="btn btn-primary">
-                      Save
-                    </button>
+                  <div className="modal-actions">
+                    <button type="button" className="btn btn-soft" onClick={() => setShowPermissionModal(false)}>Cancel</button>
+                    <button type="submit" className="btn btn-primary">Save Permission</button>
                   </div>
                 </form>
               </div>
             </div>
           )}
 
-          {/* === Add/Edit Role Modal === */}
+          {/* Add/Edit Role Modal */}
           {showRoleModal && (
-            <div className="modal-overlay">
-              <div className="modal-content">
-                <h2>{isEditing ? "Edit Role" : "Add New Role"}</h2>
+            <div className="modal-backdrop">
+              <div className="modal" style={{ maxWidth: "420px" }}>
+                <h2 style={{ marginBottom: "16px" }}>{isEditing ? "Edit Role" : "Add New Role"}</h2>
                 <form onSubmit={handleAddOrEditRole}>
-                  <label>
-                    Role Name
-                    <input
-                      className="input"
-                      value={newRole.name}
-                      onChange={(e) => setNewRole({ ...newRole, name: e.target.value })}
-                      required
-                    />
-                  </label>
+                  <label>Role Name</label>
+                  <input
+                    className="input"
+                    value={newRole.name}
+                    onChange={(e) => setNewRole({ ...newRole, name: e.target.value })}
+                    placeholder="e.g. Senior Manager"
+                    required
+                  />
 
-                  <label>
-                    Description
-                    <textarea
-                      className="input"
-                      rows="3"
-                      value={newRole.desc}
-                      onChange={(e) => setNewRole({ ...newRole, desc: e.target.value })}
-                      required
-                    ></textarea>
-                  </label>
+                  <label style={{ marginTop: "12px", display: "block" }}>Description</label>
+                  <textarea
+                    className="input"
+                    rows="3"
+                    value={newRole.desc}
+                    onChange={(e) => setNewRole({ ...newRole, desc: e.target.value })}
+                    placeholder="Describe the scope of this role..."
+                    required
+                  ></textarea>
 
-                  <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "16px" }}>
-                    <button type="button" className="btn btn-soft" onClick={() => setShowRoleModal(false)}>
-                      Cancel
-                    </button>
-                    <button type="submit" className="btn btn-primary">
-                      {isEditing ? "Update" : "Save"}
-                    </button>
+                  <div className="modal-actions">
+                    <button type="button" className="btn btn-soft" onClick={() => setShowRoleModal(false)}>Cancel</button>
+                    <button type="submit" className="btn btn-primary">{isEditing ? "Update Role" : "Create Role"}</button>
                   </div>
                 </form>
               </div>

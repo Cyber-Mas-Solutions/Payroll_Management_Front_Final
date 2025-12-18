@@ -53,6 +53,13 @@ import FinalizePayroll from "./pages/Payroll Processing/FinalizePayroll";
 import ConfirmProcessing from "./pages/Payroll Processing/ConfirmProcessing";
 import GeneratePaySlip from "./pages/Payroll Processing/GeneratePaySlip";
 import EmployeeSalaryDetails from "./pages/Payroll Processing/EmployeeSalaryDetails";
+import EPFTransfer from "./pages/Payroll Processing/EPFTransfer";
+import ProcessEPFTransfer from "./pages/Payroll Processing/ProcessEPFTransfer";
+import LoadEPFEmployeeData from "./pages/Payroll Processing/LoadEPFEmployeeData";
+import ReviewEPFTransfer from "./pages/Payroll Processing/ReviewEPFTransfer";
+import FinalizeEPF from "./pages/Payroll Processing/FinalizeEPF";
+import ConfirmEPFTransfer from "./pages/Payroll Processing/ConfirmEPFTransfer";
+import ETFTransfer from "./pages/Payroll Processing/ETFTransfer";
 
 // Reports and Analytics
 import EmployeeSummaryPage from "./pages/Reports/EmployeeSummaryPage/EmployeeSummaryPage";
@@ -149,6 +156,13 @@ function App() {
           <Route path="/process-payroll/confirm-processing" element={<ConfirmProcessing />} />
           <Route path="/generate-pay-slip" element={<GeneratePaySlip />} />
           <Route path="/employee-salary-details" element={<EmployeeSalaryDetails />} />
+          <Route path="/epf-transfer" element={<EPFTransfer />} />
+          <Route path="/process-epf-transfer" element={<ProcessEPFTransfer />} />
+          <Route path="/process-epf-transfer/load-data" element={<LoadEPFEmployeeData />} />
+          <Route path="/process-epf-transfer/review" element={<ReviewEPFTransfer />} />
+          <Route path="/process-epf-transfer/confirm" element={<FinalizeEPF />} />
+          <Route path="/process-epf/confirm-transfer" element={<ConfirmEPFTransfer />} />
+          <Route path="/etf-transfer" element={<ETFTransfer />} />
 
           {/* Reports and Analysis */}
           <Route path="/report-analytics" element={<EmployeeSummaryPage />} /> {/* Main Reports Landing */}

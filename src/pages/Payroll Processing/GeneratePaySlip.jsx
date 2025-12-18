@@ -19,9 +19,6 @@ const GeneratePaySlip = () => {
     { label: "Insurance Payments", path: "/insurance-payments" },
   ];
 
-  // Toggle: Employee / Department
-  const [mode, setMode] = useState("employee");
-
   // State variables
   const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [selectedEmployeeId, setSelectedEmployeeId] = useState("");
@@ -60,87 +57,69 @@ const GeneratePaySlip = () => {
       }
       const res = await apiGet('/salary/employees', { params });
       setEmployees(res.data || []);
-      if (res.data?.length > 0 && !selectedEmployeeId) {
-        setSelectedEmployeeId(res.data[0].employee_id);
-      }
     } catch (err) {
       console.error('Failed to fetch employees:', err);
     }
   };
 
-  // Filter employees by ID
+  // ================= FILTER LOGIC =================
+  // Filters employees by Code, ID, or Name
   const filteredEmployees = useMemo(() => {
     let list = employees;
-
     if (employeeIdFilter.trim()) {
+      const search = employeeIdFilter.toLowerCase();
       list = list.filter(e => 
-        e.employee_code?.toLowerCase().includes(employeeIdFilter.toLowerCase()) ||
-        String(e.employee_id).includes(employeeIdFilter)
+        String(e.employee_code || "").toLowerCase().includes(search) ||
+        String(e.employee_id || "").includes(search) ||
+        String(e.full_name || "").toLowerCase().includes(search)
       );
     }
-
     return list;
   }, [employees, employeeIdFilter]);
 
-  // Fetch payroll data when employee/month changes
+  // AUTO-SELECT: When the filtered list changes, update selection to the first match
   useEffect(() => {
-    if (selectedEmployeeId && selectedMonth && mode === 'employee') {
-      fetchPayrollData();
+    if (filteredEmployees.length > 0) {
+      const isStillVisible = filteredEmployees.find(e => String(e.employee_id) === String(selectedEmployeeId));
+      if (!isStillVisible) {
+        setSelectedEmployeeId(filteredEmployees[0].employee_id);
+      }
+    } else {
+      setSelectedEmployeeId("");
     }
-  }, [selectedEmployeeId, selectedMonth, mode]);
+  }, [filteredEmployees, selectedEmployeeId]);
 
   const fetchPayrollData = async () => {
-  if (!selectedEmployeeId || !selectedMonth) return;
-  
-  const [year, month] = selectedMonth.split('-');
-  console.log('Fetching payroll data:', { selectedEmployeeId, year, month });
-  
-  setLoading(true);
-  
-  try {
-    const res = await apiGet(`/payroll/employee-payroll-data?employee_id=${selectedEmployeeId}&month=${month}&year=${year}`);
-    console.log('API Response:', res);
-    
-    if (res.ok) {
-      const transformedData = transformPayrollData(res);
-      console.log('Transformed data:', transformedData);
-      setPayrollData(transformedData);
-    } else {
-      console.error('API error:', res.message);
+    if (!selectedEmployeeId || !selectedMonth) return;
+    const [year, month] = selectedMonth.split('-');
+    setLoading(true);
+    try {
+      const res = await apiGet(`/payroll/employee-payroll-data?employee_id=${selectedEmployeeId}&month=${month}&year=${year}`);
+      if (res.ok) {
+        setPayrollData(transformPayrollData(res));
+      } else {
+        setPayrollData(null);
+      }
+    } catch (err) {
+      console.error('Error:', err);
       setPayrollData(null);
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error('Error:', err);
-    setPayrollData(null);
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-// Add this helper function
-const transformPayrollData = (apiResponse) => {
-  if (!apiResponse || !apiResponse.data) {
-    console.error('Invalid API response:', apiResponse);
-    return null;
-  }
-  
-  const data = apiResponse.data;
-  console.log('Transforming data:', data);
-  
-  return {
-    employee: {
-      ...data.employee,
-      basic_salary: data.employee.basic_salary || 0
-    },
-    period: data.period,
-    earnings: data.earnings,
-    deductions: data.deductions,
-    employer_contributions: data.employer_contributions,
-    summary: data.summary
   };
-};
-// Helper function to transform data
+
+  const transformPayrollData = (apiResponse) => {
+    if (!apiResponse || !apiResponse.data) return null;
+    const data = apiResponse.data;
+    return {
+      employee: { ...data.employee, basic_salary: data.employee.basic_salary || 0 },
+      period: data.period,
+      earnings: data.earnings,
+      deductions: data.deductions,
+      employer_contributions: data.employer_contributions,
+      summary: data.summary
+    };
+  };
 
   const handleGenerate = () => {
     if (!selectedEmployeeId || !selectedMonth) {
@@ -151,65 +130,17 @@ const transformPayrollData = (apiResponse) => {
     fetchPayrollData();
   };
 
-  
-
   const handleDownloadPDF = async () => {
-  if (!selectedEmployeeId || !selectedMonth) {
-    alert('Please select an employee and month');
-    return;
-  }
-  
-  const [year, month] = selectedMonth.split('-');
-  try {
-    // Use payroll PDF endpoint
-    window.open(`${process.env.VITE_API_URL || 'http://localhost:4000'}/api/payroll/generate-payslip-pdf?employee_id=${selectedEmployeeId}&month=${month}&year=${year}`, '_blank');
-  } catch (err) {
-    console.error('Failed to download PDF:', err);
-    alert('Failed to download PDF');
-  }
-};
-
-  const handleProcessTransfer = async () => {
-    if (!selectedEmployeeId || !selectedMonth) {
-      alert('Please select an employee and month');
-      return;
-    }
-    
     const [year, month] = selectedMonth.split('-');
-    if (!window.confirm(`Process salary transfer for selected employee for ${year}-${month}?`)) return;
-    
-    try {
-      const res = await apiPost('/payroll/process-salary-transfer', {
-        employee_ids: [selectedEmployeeId],
-        month: parseInt(month),
-        year: parseInt(year),
-        payment_date: new Date().toISOString().slice(0, 10)
-      });
-      
-      if (res.ok) {
-        alert('Salary transfer processed successfully');
-      } else {
-        alert('Failed to process salary transfer: ' + res.message);
-      }
-    } catch (err) {
-      console.error('Error processing transfer:', err);
-      alert('Failed to process salary transfer');
-    }
+    window.open(`${process.env.VITE_API_URL || 'http://localhost:4000'}/api/payroll/generate-payslip-pdf?employee_id=${selectedEmployeeId}&month=${month}&year=${year}`, '_blank');
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
+  const handlePrint = () => window.print();
 
   const formatCurrency = (amount) => {
     return `Rs ${Number(amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
-  const selectedEmployee = useMemo(() => {
-    return filteredEmployees.find(e => e.employee_id === selectedEmployeeId) || filteredEmployees[0];
-  }, [filteredEmployees, selectedEmployeeId]);
-
-  // Generate month options
   const months = useMemo(() => {
     const result = [];
     const now = new Date();
@@ -218,10 +149,7 @@ const transformPayrollData = (apiResponse) => {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const monthName = date.toLocaleString('default', { month: 'long' });
-      result.push({
-        value: `${year}-${month}`,
-        label: `${monthName} ${year}`
-      });
+      result.push({ value: `${year}-${month}`, label: `${monthName} ${year}` });
     }
     return result;
   }, []);
@@ -243,20 +171,19 @@ const transformPayrollData = (apiResponse) => {
         ))}
       </div>
 
-      {/* ================= PAYSLIP FILTERS + GENERATE ================= */}
+      {/* ================= PAYSLIP FILTERS ================= */}
       <div className="card" style={{ padding: 24 }}>
         <div style={{ color: "var(--muted)", fontSize: 13, marginBottom: 16 }}>
           Select employee, department and month to generate pay slips
         </div>
 
-        {/* Filters */}
         <div className="grid-3" style={{ gap: 16 }}>
-          {/* Employee */}
+          {/* Employee Filter & Select */}
           <div>
-            <div style={{ fontSize: 12, color: "var(--muted)", marginBottom: 6 }}>Filter by Employee ID</div>
+            <div style={{ fontSize: 12, color: "var(--muted)", marginBottom: 6 }}>Search Employee ID/Name</div>
             <input
               className="input"
-              placeholder="Enter Employee ID or Code"
+              placeholder="Enter Employee ID or Name"
               value={employeeIdFilter}
               onChange={(e) => setEmployeeIdFilter(e.target.value)}
               style={{ marginBottom: 8 }}
@@ -289,9 +216,7 @@ const transformPayrollData = (apiResponse) => {
               onChange={(e) => setSelectedDepartment(e.target.value)}
             >
               {departments.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name}
-                </option>
+                <option key={d.id} value={d.id}>{d.name}</option>
               ))}
             </select>
           </div>
@@ -305,32 +230,23 @@ const transformPayrollData = (apiResponse) => {
               onChange={(e) => setSelectedMonth(e.target.value)}
             >
               {months.map((m) => (
-                <option key={m.value} value={m.value}>
-                  {m.label}
-                </option>
+                <option key={m.value} value={m.value}>{m.label}</option>
               ))}
             </select>
           </div>
         </div>
 
-        <div style={{ marginTop: 18, display: "flex", gap: 12 }}>
+        <div style={{ marginTop: 18 }}>
           <button 
             className="btn btn-primary" 
             onClick={handleGenerate} 
-            disabled={!selectedEmployeeId || !selectedMonth || loading}
+            disabled={!selectedEmployeeId || loading}
           >
             {loading ? 'Loading...' : '📄 Generate Payslip'}
           </button>
-          <button 
-            className="btn btn-soft"
-            onClick={handleProcessTransfer}
-            disabled={!selectedEmployeeId || !selectedMonth}
-          >
-            💰 Process Salary Transfer
-          </button>
         </div>
 
-        {/* ================= PAYSLIP REVIEW ================= */}
+        {/* ================= PAYSLIP REVIEW (RESTORED) ================= */}
         {generated && payrollData && (
           <div style={{ marginTop: 24 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
@@ -362,7 +278,6 @@ const transformPayrollData = (apiResponse) => {
 
               {/* Body */}
               <div style={{ marginTop: 18 }}>
-                {/* Employee & Payment Summary */}
                 <div className="grid-2" style={{ alignItems: "start" }}>
                   {/* Employee Details */}
                   <div>
@@ -384,10 +299,6 @@ const transformPayrollData = (apiResponse) => {
                         <div style={{ color: "var(--muted)", fontWeight: 600 }}>Department</div>
                         <div>:</div>
                         <div>{payrollData.employee.department || '-'}</div>
-
-                        <div style={{ color: "var(--muted)", fontWeight: 600 }}>Month</div>
-                        <div>:</div>
-                        <div>{payrollData.period.month_name} {payrollData.period.year}</div>
                       </div>
                     </div>
                   </div>
@@ -413,7 +324,7 @@ const transformPayrollData = (apiResponse) => {
                   </div>
                 </div>
 
-                {/* Earnings + Deductions tables */}
+                {/* Earnings & Deductions tables */}
                 <div className="grid-2" style={{ marginTop: 18 }}>
                   <div>
                     <div style={{ fontWeight: 700, marginBottom: 10 }}>Earnings</div>
@@ -426,8 +337,8 @@ const transformPayrollData = (apiResponse) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {payrollData.earnings.breakdown.map((row) => (
-                            <tr key={row.description}>
+                          {payrollData.earnings.breakdown.map((row, idx) => (
+                            <tr key={idx}>
                               <td>{row.description}</td>
                               <td style={{ textAlign: "right" }}>{formatCurrency(row.amount)}</td>
                             </tr>
@@ -452,8 +363,8 @@ const transformPayrollData = (apiResponse) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {payrollData.deductions.breakdown.map((row) => (
-                            <tr key={row.description}>
+                          {payrollData.deductions.breakdown.map((row, idx) => (
+                            <tr key={idx}>
                               <td>{row.description}</td>
                               <td style={{ textAlign: "right" }}>{formatCurrency(row.amount)}</td>
                             </tr>
@@ -496,20 +407,6 @@ const transformPayrollData = (apiResponse) => {
                 </div>
               </div>
             </div>
-          </div>
-        )}
-
-        {/* Loading State */}
-        {loading && (
-          <div style={{ marginTop: 24, textAlign: 'center', padding: 20 }}>
-            <div>Loading payroll data...</div>
-          </div>
-        )}
-
-        {/* No Data State */}
-        {generated && !payrollData && !loading && (
-          <div style={{ marginTop: 24, textAlign: 'center', padding: 20, color: 'var(--muted)' }}>
-            No payroll data found for the selected employee and period.
           </div>
         )}
       </div>

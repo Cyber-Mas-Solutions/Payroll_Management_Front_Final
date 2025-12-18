@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 
-
 const RoleManagement = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -113,6 +112,7 @@ const RoleManagement = () => {
         </div>
 
         <div className="app-content">
+          {/* Page Header */}
           <div className="page-header">
             <div className="breadcrumb">
               <span className="breadcrumb-item">Administration</span>
@@ -123,12 +123,13 @@ const RoleManagement = () => {
             <p className="subtitle">Manage system roles and their permissions</p>
           </div>
 
-          {/* Tabs */}
-          <div className="card" style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
+          {/* ================= TABS ================= */}
+          <div className="card" style={{ display: "flex", gap: "8px", marginBottom: "16px", flexWrap: "wrap" }}>
             {tabs.map((t) => (
               <button
                 key={t.path}
-                className={`btn btn-soft ${location.pathname === t.path ? "btn-primary" : ""}`}
+                /* Updated logic: btn-primary for white font on active tab */
+                className={`btn ${location.pathname === t.path ? "btn-primary" : "btn-soft"}`}
                 onClick={() => navigate(t.path)}
               >
                 {t.label}
@@ -167,17 +168,17 @@ const RoleManagement = () => {
                     <th>Description</th>
                     <th>Users</th>
                     <th>Permissions</th>
-                    <th>Actions</th>
+                    <th style={{ textAlign: "center" }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredRoles.map((r, i) => (
                     <tr key={i}>
-                      <td>{r.name}</td>
+                      <td><span style={{ fontWeight: 600 }}>{r.name}</span></td>
                       <td>{r.description}</td>
                       <td>{r.users}</td>
                       <td>{r.permissions}</td>
-                      <td>
+                      <td style={{ textAlign: "center" }}>
                         <button className="btn btn-soft" onClick={() => handleEdit(i)}>
                           Edit
                         </button>{" "}
@@ -196,76 +197,48 @@ const RoleManagement = () => {
             )}
           </div>
 
-          {/* Modal */}
+          {/* ================= MODAL ================= */}
           {showModal && (
-            <div
-              style={{
-                position: "fixed",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                background: "rgba(0,0,0,0.4)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                zIndex: 1000,
-              }}
-            >
-              <div
-                style={{
-                  background: "white",
-                  borderRadius: "8px",
-                  padding: "24px",
-                  width: "420px",
-                }}
-              >
+            <div className="modal-backdrop">
+              <div className="modal" style={{ width: "420px" }}>
                 <h2 style={{ marginBottom: "16px" }}>
                   {isEditing ? "Edit Role" : "Add New Role"}
                 </h2>
 
                 <form onSubmit={handleSaveRole}>
-                  <label>
-                    Role Name
-                    <input
-                      className="input"
-                      value={roleData.name}
-                      onChange={(e) => setRoleData({ ...roleData, name: e.target.value })}
-                      required
-                    />
-                  </label>
+                  <label>Role Name</label>
+                  <input
+                    className="input"
+                    value={roleData.name}
+                    onChange={(e) => setRoleData({ ...roleData, name: e.target.value })}
+                    required
+                  />
 
-                  <label>
-                    Description
-                    <textarea
-                      className="input"
-                      rows="3"
-                      value={roleData.description}
-                      onChange={(e) => setRoleData({ ...roleData, description: e.target.value })}
-                      required
-                    ></textarea>
-                  </label>
+                  <label style={{ marginTop: "12px", display: "block" }}>Description</label>
+                  <textarea
+                    className="input"
+                    rows="3"
+                    value={roleData.description}
+                    onChange={(e) => setRoleData({ ...roleData, description: e.target.value })}
+                    required
+                  ></textarea>
 
-                  <label>
-                    Users (Count)
-                    <input
-                      className="input"
-                      type="number"
-                      value={roleData.users}
-                      onChange={(e) => setRoleData({ ...roleData, users: Number(e.target.value) })}
-                    />
-                  </label>
+                  <label style={{ marginTop: "12px", display: "block" }}>Users (Count)</label>
+                  <input
+                    className="input"
+                    type="number"
+                    value={roleData.users}
+                    onChange={(e) => setRoleData({ ...roleData, users: Number(e.target.value) })}
+                  />
 
-                  <label>
-                    Permissions (comma-separated)
-                    <input
-                      className="input"
-                      value={roleData.permissions}
-                      onChange={(e) => setRoleData({ ...roleData, permissions: e.target.value })}
-                    />
-                  </label>
+                  <label style={{ marginTop: "12px", display: "block" }}>Permissions (comma-separated)</label>
+                  <input
+                    className="input"
+                    value={roleData.permissions}
+                    onChange={(e) => setRoleData({ ...roleData, permissions: e.target.value })}
+                  />
 
-                  <div style={{ marginTop: "16px", display: "flex", justifyContent: "flex-end", gap: "8px" }}>
+                  <div className="modal-actions">
                     <button type="button" className="btn btn-soft" onClick={() => setShowModal(false)}>
                       Cancel
                     </button>
