@@ -2,18 +2,19 @@
 import { getPublicIP } from "../utils/getIP";
 
 // Base URL (same as you had)
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
+export const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000/api'; // Add "export" here
 
 // ---- Token helpers -------------------------------------------------
-function getToken() {
+export function getToken() { // Add "export" here
   // Adjust if your app stores the token differently
   return localStorage.getItem('token') || sessionStorage.getItem('token');
 }
 
-function authHeaders(extra = {}) {
+export function authHeaders(extra = {}) { // Add "export" here
   const token = getToken();
   return token ? { ...extra, Authorization: `Bearer ${token}` } : { ...extra };
 }
+
 
 // ---- GET: return raw body (array or object). Throw on non-2xx -----
 export async function apiGet(path, opts = {}) {
