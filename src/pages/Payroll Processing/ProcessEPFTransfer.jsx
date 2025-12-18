@@ -4,10 +4,10 @@ import PageHeader from "../../components/PageHeader";
 import { FiCalendar, FiUsers, FiBriefcase, FiInfo, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
-const ProcessPayroll = () => {
+const ProcessEPFTransfer = () => {
   const navigate = useNavigate();
 
-  // Current month & year as default
+  // Current month & year
   const today = new Date();
 
   const [selectedYear, setSelectedYear] = useState(today.getFullYear());
@@ -24,8 +24,13 @@ const ProcessPayroll = () => {
   return (
     <Layout>
       <PageHeader
-        breadcrumb={["Payroll", "Process Payroll"]}
-        title="Process Payroll"
+        breadcrumb={[
+          "Payroll",
+          "Payroll Processing & Disbursement",
+          "EPF Transfer",
+          "Process EPF",
+        ]}
+        title="Process EPF Transfer"
       />
 
       {/* MAIN GRID */}
@@ -42,7 +47,7 @@ const ProcessPayroll = () => {
         <div>
           <div className="card" style={{ padding: 24, borderRadius: 20 }}>
             <p style={{ color: "var(--muted)", marginBottom: 24, fontSize: 14 }}>
-              Complete the steps below to process payroll for your employees.
+              Complete the steps below to process EPF contributions for employees.
             </p>
 
             {/* STEP INDICATOR */}
@@ -60,17 +65,21 @@ const ProcessPayroll = () => {
               <span style={{ color: "#4F46E5", borderBottom: "2px solid #4F46E5", paddingBottom: 12 }}>
                 Select Month
               </span>
-              <span style={{ color: "var(--muted)" }}>Load Employee Data</span>
               <span style={{ color: "var(--muted)" }}>
-                Review Salary Calculations
+                Load EPF Employee Data
               </span>
-              <span style={{ color: "var(--muted)" }}>Confirm Processing</span>
+              <span style={{ color: "var(--muted)" }}>
+                Review EPF Calculations
+              </span>
+              <span style={{ color: "var(--muted)" }}>
+                Confirm EPF Transfer
+              </span>
             </div>
 
             {/* INNER CARD */}
             <div className="card" style={{ padding: 24, border: "1px solid #F3F4F6" }}>
               <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 20 }}>
-                Select Payroll Month
+                Select EPF Contribution Month
               </h3>
 
               {/* YEAR SELECTOR */}
@@ -138,7 +147,7 @@ const ProcessPayroll = () => {
 
               {/* SELECTED TEXT */}
               <p style={{ marginTop: 24, fontSize: 14, color: "#6B7280" }}>
-                <strong style={{ color: "#111827" }}>Selected Month :</strong>{" "}
+                <strong style={{ color: "#111827" }}>Selected EPF Month :</strong>{" "}
                 {selectedMonth} {selectedYear}
               </p>
 
@@ -152,7 +161,7 @@ const ProcessPayroll = () => {
               >
                 <button
                   className="btn btn-soft"
-                  onClick={() => navigate("/payroll-dashboard")}
+                  onClick={() => navigate("/epf-transfer")}
                 >
                   ‹ Back
                 </button>
@@ -161,7 +170,7 @@ const ProcessPayroll = () => {
                   className="btn btn-primary"
                   style={{ padding: "10px 24px" }}
                   onClick={() =>
-                    navigate("/process-payroll/load-data", {
+                    navigate("/process-epf-transfer/load-data", {
                       state: { month: selectedMonth, year: selectedYear },
                     })
                   }
@@ -173,11 +182,11 @@ const ProcessPayroll = () => {
           </div>
         </div>
 
-        {/* RIGHT SUMMARY PANEL */}
+        {/* RIGHT SUMMARY PANEL (STYLED LIKE IMAGE) */}
         <div>
           <div className="card" style={{ padding: 32, borderRadius: 32, border: "1px solid #E5E7EB" }}>
-            <h3 style={{ fontWeight: 800, fontSize: 24, marginBottom: 32, color: "#000" }}>
-              Payroll Summary
+            <h3 style={{ fontWeight: 500, fontSize: 20, marginBottom: 32, color: "#868585ff" }}>
+              EPF Transfer Summary 
             </h3>
 
             {/* Total Employees */}
@@ -215,7 +224,7 @@ const ProcessPayroll = () => {
                 marginBottom: "20px",
               }}
             >
-              <div style={{ color: "#16A34A", fontSize: "28px", display: "flex" }}>
+              <div style={{ color: "#16A34A", fontSize: "24px", display: "flex" }}>
                 <FiBriefcase />
               </div>
               <div>
@@ -239,7 +248,7 @@ const ProcessPayroll = () => {
                 gap: "20px",
               }}
             >
-              <div style={{ color: "#EA580C", fontSize: "24px", display: "flex" }}>
+              <div style={{ color: "#EA580C", fontSize: "20px", display: "flex" }}>
                 <FiInfo />
               </div>
               <div>
@@ -284,4 +293,4 @@ const ProcessPayroll = () => {
   );
 };
 
-export default ProcessPayroll;
+export default ProcessEPFTransfer;
