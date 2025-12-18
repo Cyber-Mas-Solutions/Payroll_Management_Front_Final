@@ -93,6 +93,7 @@ const Sidebar = () => {
     '/process-epf-transfer/review',
     '/process-epf-transfer/confirm',
     '/process-epf/confirm-transfer',
+    '/etf-transfer',
 
   ];
 
