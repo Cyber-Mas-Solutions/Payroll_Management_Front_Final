@@ -295,6 +295,43 @@ export const unpaidLeavesApi = {
     processDeduction: (id, data) => apiPost(`/salary/unpaid-leaves/${id}/process`, data || {}),
 };
 
+// Add to api.js
+export const payrollApi = {
+  getPayrollSummary: (params) => 
+    apiGetWithParams('/payroll/payroll-summary', params),
+  
+  getPayrollStatus: (params) => 
+    apiGetWithParams('/payroll/payroll-status', params),
+  
+  getPayrollTransferOverview: (params) => 
+    apiGetWithParams('/payroll/payroll-transfer-overview', params),
+  
+  initiateBankTransfer: (data) => 
+    apiPost('/payroll/initiate-bank-transfer', data),
+  
+  // Existing functions...
+  getEmployeePayrollData: (params) => 
+    apiGetWithParams('/payroll/employee-payroll-data', params),
+  
+  generatePaySlipPDF: (params) => 
+    apiGetWithParams('/payroll/generate-payslip-pdf', params),
+  
+  processSalaryTransfer: (data) => 
+    apiPost('/payroll/process-salary-transfer', data),
+  
+  getDepartmentPayrollSummary: (params) => 
+    apiGetWithParams('/payroll/department-payroll-summary', params),
+  
+  getPayrollTransfers: (params) => 
+    apiGetWithParams('/payroll/payroll-transfers', params),
+  
+  exportPayrollCSV: (params) => 
+    apiGetWithParams('/payroll/export-payroll-csv', params),
+  
+  getAvailableMonths: (params) => 
+    apiGetWithParams('/payroll/available-months', params),
+};
+
 
 
 
