@@ -1,10 +1,12 @@
 // src/pages/LoadEmployeeData.jsx
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "../../components/Layout";
 import PageHeader from "../../components/PageHeader";
 import { FiCheckCircle, FiClock } from "react-icons/fi";
 
 const LoadEmployeeData = () => {
+   const navigate = useNavigate(); 
   const employees = [
     { id: "0001", name: "Rashmi Samadara", dept: "HR", status: "Processed" },
     { id: "0005", name: "Janith Perera", dept: "Finance", status: "Processed" },
@@ -138,8 +140,17 @@ const LoadEmployeeData = () => {
                 marginTop: 20,
               }}
             >
-              <button className="btn btn-soft">‹ Back</button>
-              <button className="btn btn-primary">Next ›</button>
+              <button className="btn btn-soft"
+              onClick={() => navigate("/process-payroll")}
+              >‹ Back</button>
+             <button
+              className="btn btn-primary"
+              onClick={() =>
+                navigate("/process-payroll/review-salary")
+              }
+            >
+              Next ▶
+            </button>
             </div>
 
           </div>

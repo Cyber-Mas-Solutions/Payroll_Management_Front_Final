@@ -1,16 +1,25 @@
-// src/pages/ProcessPayroll.jsx
 import React, { useState } from "react";
 import Layout from "../../components/Layout";
 import PageHeader from "../../components/PageHeader";
 import { FiCalendar } from "react-icons/fi";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 
 const ProcessPayroll = () => {
-    const navigate = useNavigate();  //
-  const [selectedMonth, setSelectedMonth] = useState("April 2025");
+  const navigate = useNavigate();
 
-  const months = ["April 2025", "June 2025", "July 2025"];
+  // Current month & year as default
+  const today = new Date();
 
+  const [selectedYear, setSelectedYear] = useState(today.getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(
+    today.toLocaleString("default", { month: "long" })
+  );
+
+  const months = [
+    "January", "February", "March", "April",
+    "May", "June", "July", "August",
+    "September", "October", "November", "December"
+  ];
 
   return (
     <Layout>
@@ -19,28 +28,23 @@ const ProcessPayroll = () => {
         title="Process Payroll"
       />
 
-      {/* MAIN GRID (70% left, 30% right) */}
+      {/* MAIN GRID */}
       <div
-        className="grid"
         style={{
           display: "grid",
           gridTemplateColumns: "2fr 1fr",
-          gap: "16px",
+          gap: 16,
           margin: "0 24px",
         }}
       >
         {/* LEFT PANEL */}
         <div>
           <div className="card" style={{ padding: 24 }}>
-            {/* --- Title Text --- */}
-            <h2 style={{ fontSize: 26, fontWeight: 700, marginBottom: 4 }}>
-              
-            </h2>
             <p style={{ color: "var(--muted)", marginBottom: 24, fontSize: 14 }}>
               Complete the steps below to process payroll for your employees.
             </p>
 
-            {/* TOP TAB BAR */}
+            {/* STEP INDICATOR */}
             <div
               style={{
                 display: "flex",
@@ -63,49 +67,76 @@ const ProcessPayroll = () => {
             </div>
 
             {/* INNER CARD */}
-            <div className="card" style={{ padding: 24, margin: 0 }}>
-              <h3
-                style={{
-                  fontSize: 16,
-                  fontWeight: 600,
-                  marginBottom: 20,
-                }}
-              >
+            <div className="card" style={{ padding: 24 }}>
+              <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 20 }}>
                 Select Payroll Month
               </h3>
 
-              {/* MONTH BUTTONS */}
-              <div style={{ display: "flex", gap: 16 }}>
+              {/* YEAR SELECTOR */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: 20,
+                }}
+              >
+                <button
+                  className="btn btn-soft"
+                  onClick={() => setSelectedYear((y) => y - 1)}
+                >
+                  ‹
+                </button>
+
+                <h2 style={{ margin: 0 }}>{selectedYear}</h2>
+
+                <button
+                  className="btn btn-soft"
+                  onClick={() => setSelectedYear((y) => y + 1)}
+                >
+                  ›
+                </button>
+              </div>
+
+              {/* MONTH GRID */}
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(4, 1fr)",
+                  gap: 12,
+                }}
+              >
                 {months.map((month) => (
                   <div
                     key={month}
                     onClick={() => setSelectedMonth(month)}
+                    className="hover-card"
                     style={{
-                      padding: "12px 20px",
-                      borderRadius: 8,
+                      padding: "14px 10px",
+                      textAlign: "center",
+                      borderRadius: 10,
+                      cursor: "pointer",
+                      fontSize: 14,
+                      fontWeight: 500,
                       border:
                         selectedMonth === month
                           ? "2px solid var(--brand)"
                           : "1px solid var(--border)",
                       background:
-                        selectedMonth === month ? "#eef6ff" : "white",
-                      cursor: "pointer",
-                      fontSize: 14,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
+                        selectedMonth === month ? "#EEF2FF" : "#fff",
+                      transition: "all 0.2s ease",
                     }}
-                    className="hover-card"
                   >
-                    <FiCalendar size={16} />
-                    {month}
+                    <FiCalendar size={14} style={{ marginBottom: 6 }} />
+                    <div>{month}</div>
                   </div>
                 ))}
               </div>
 
-              {/* SELECTED MONTH TEXT */}
+              {/* SELECTED TEXT */}
               <p style={{ marginTop: 20, fontSize: 14 }}>
-                <strong>Select month :</strong> {selectedMonth}
+                <strong>Selected Month :</strong>{" "}
+                {selectedMonth} {selectedYear}
               </p>
 
               {/* ACTION BUTTONS */}
@@ -116,14 +147,23 @@ const ProcessPayroll = () => {
                   marginTop: 40,
                 }}
               >
-                <button className="btn btn-soft">‹ Back</button>
                 <button
-                className="btn btn-primary"
-                onClick={() => navigate("/process-payroll/load-data")}
+                  className="btn btn-soft"
+                  onClick={() => navigate("/process-payroll")}
                 >
-                Next ▶
+                  ‹ Back
                 </button>
 
+                <button
+                  className="btn btn-primary"
+                  onClick={() =>
+                    navigate("/process-payroll/load-data", {
+                      state: { month: selectedMonth, year: selectedYear },
+                    })
+                  }
+                >
+                  Next ▶
+                </button>
               </div>
             </div>
           </div>
@@ -131,17 +171,9 @@ const ProcessPayroll = () => {
 
         {/* RIGHT SUMMARY PANEL */}
         <div>
-          <div
-            className="card"
-            style={{
-              borderRadius: 16,
-              padding: 28,
-              height: "fit-content",
-            }}
-          >
+          <div className="card" style={{ padding: 28 }}>
             <h3 style={{ fontWeight: 700, fontSize: 18 }}>Payroll Summary</h3>
 
-            {/* Total Employees */}
             <div
               className="card"
               style={{
@@ -158,7 +190,6 @@ const ProcessPayroll = () => {
               <h1 style={{ fontSize: 26, margin: 0 }}>127</h1>
             </div>
 
-            {/* Total Salary */}
             <div
               className="card"
               style={{
@@ -175,7 +206,6 @@ const ProcessPayroll = () => {
               <h1 style={{ fontSize: 26, margin: 0 }}>$42,542,000</h1>
             </div>
 
-            {/* Pending Cases */}
             <div
               className="card"
               style={{
@@ -193,7 +223,9 @@ const ProcessPayroll = () => {
 
             <hr style={{ margin: "28px 0" }} />
 
-            <p style={{ fontWeight: 600, fontSize: 14 }}>Processing Status</p>
+            <p style={{ fontWeight: 600, fontSize: 14 }}>
+              Processing Status
+            </p>
 
             <div
               style={{
@@ -210,7 +242,7 @@ const ProcessPayroll = () => {
                   background: "#6366F1",
                   borderRadius: 6,
                 }}
-              ></div>
+              />
             </div>
 
             <p style={{ fontSize: 12, marginTop: 8, color: "var(--muted)" }}>
