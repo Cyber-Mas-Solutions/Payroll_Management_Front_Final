@@ -59,6 +59,7 @@ import LoadEPFEmployeeData from "./pages/Payroll Processing/LoadEPFEmployeeData"
 import ReviewEPFTransfer from "./pages/Payroll Processing/ReviewEPFTransfer";
 import FinalizeEPF from "./pages/Payroll Processing/FinalizeEPF";
 import ConfirmEPFTransfer from "./pages/Payroll Processing/ConfirmEPFTransfer";
+import ETFTransfer from "./pages/Payroll Processing/ETFTransfer";
 
 // Reports and Analytics
 import EmployeeSummaryPage from "./pages/Reports/EmployeeSummaryPage/EmployeeSummaryPage";
@@ -161,6 +162,7 @@ function App() {
           <Route path="/process-epf-transfer/review" element={<ReviewEPFTransfer />} />
           <Route path="/process-epf-transfer/confirm" element={<FinalizeEPF />} />
           <Route path="/process-epf/confirm-transfer" element={<ConfirmEPFTransfer />} />
+          <Route path="/etf-transfer" element={<ETFTransfer />} />
 
           {/* Reports and Analysis */}
           <Route path="/report-analytics" element={<EmployeeSummaryPage />} /> {/* Main Reports Landing */}
