@@ -102,10 +102,9 @@ const FinalizeEPF = () => {
             {/* CONFIRMATION CHECKBOX */}
             <div 
               style={{ 
-                background: agree ? "#EEF2FF" : "#FDF2F2", 
+                
                 padding: "16px", 
                 borderRadius: "12px", 
-                border: agree ? "1px solid #C7D2FE" : "1px solid #FEE2E2",
                 transition: "0.3s"
               }}
             >
@@ -143,9 +142,9 @@ const FinalizeEPF = () => {
                 className="btn btn-primary"
                 style={{ 
                   flex: 2, 
-                  padding: "14px 0", 
+                  padding: "8px 0", 
                   fontSize: 16, 
-                  fontWeight: 700,
+                  fontWeight: 600,
                   opacity: agree ? 1 : 0.6
                 }}
                 disabled={!agree}

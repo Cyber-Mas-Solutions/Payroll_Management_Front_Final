@@ -96,8 +96,8 @@ const EmployeeSalaryDetails = () => {
               <tr>
                 <th>Profile</th>
                 <th>Gross Salary</th>
-                <th>Net Salary</th>
                 <th>Deduction</th>
+                <th>Net Salary</th>
                 <th>Mobile Number</th>
                 <th>Bank Transfer</th>
                 <th>View</th>
@@ -148,8 +148,8 @@ const EmployeeSalaryDetails = () => {
           >
             <h3>{selectedEmployee.name}</h3>
             <p>Gross: ${selectedEmployee.gross}</p>
-            <p>Net: ${selectedEmployee.net}</p>
             <p>Deduction: ${selectedEmployee.deduction}</p>
+            <p>Net: ${selectedEmployee.net}</p>
             <p>Status: {selectedEmployee.bankStatus}</p>
             <button className="btn btn-soft" onClick={() => setSelectedEmployee(null)}>
               Close

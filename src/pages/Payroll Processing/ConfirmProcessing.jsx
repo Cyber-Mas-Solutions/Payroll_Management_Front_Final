@@ -118,7 +118,8 @@ const ConfirmProcessing = () => {
                   ‹ Back
                 </button>
 
-                <button className="btn btn-primary" onClick={finish}>
+                <button className="btn btn-primary" onClick={() => navigate("/payroll-processing")}
+                >
                   Finish ✓
                 </button>
               </div>

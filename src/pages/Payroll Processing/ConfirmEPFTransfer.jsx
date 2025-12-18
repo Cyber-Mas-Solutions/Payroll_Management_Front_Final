@@ -124,7 +124,7 @@ const ConfirmEPFTransfer = () => {
                 <button 
                   className="btn btn-primary" 
                   style={{ padding: "12px 48px", fontWeight: 700, fontSize: 16 }} 
-                  onClick={finish}
+                  onClick={() => navigate("/epf-transfer")}
                 >
                   Finish & Return ✓
                 </button>
