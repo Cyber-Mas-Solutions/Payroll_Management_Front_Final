@@ -148,60 +148,15 @@ export default function ETFTransfer() {
             >
               Process ETF Transfer
             </button>
-            <button className="btn btn-soft">Download ETF Form II</button>
+                      <button 
+              className="btn btn-soft" 
+              onClick={() => navigate("/etf-form-ii")}
+            >
+              Download ETF Form II
+            </button>
             <button className="btn btn-soft">Submit to ETF Board</button>
           </div>
         </div>
-      </div>
-
-      {/* ================= TABLE ================= */}
-      <div className="card">
-        {loading ? (
-          <div style={{ padding: 40, textAlign: "center" }}>Loading...</div>
-        ) : (
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Employee</th>
-                <th>ETF No</th>
-                <th>Month</th>
-                <th>Amount (3%)</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {transfers.map((t) => (
-                <tr key={t.id}>
-                  <td>{t.employee_name}</td>
-                  <td>{t.etf_number}</td>
-                  <td>{t.month}</td>
-                  <td>Rs. {t.total.toLocaleString()}</td>
-                  <td>
-                    <span
-                      className={`pill ${
-                        t.status === "Completed" ? "pill-ok" : "pill-warn"
-                      }`}
-                    >
-                      {t.status}
-                    </span>
-                  </td>
-                  <td>
-                    <button
-                      className="btn btn-soft"
-                      onClick={() => {
-                        setSelectedTransfer(t);
-                        setShowDetailsModal(true);
-                      }}
-                    >
-                      View Details
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
       </div>
 
       {/* ================= DETAILS MODAL ================= */}
