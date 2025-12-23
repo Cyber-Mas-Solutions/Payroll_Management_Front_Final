@@ -54,12 +54,15 @@ import ConfirmProcessing from "./pages/Payroll Processing/ConfirmProcessing";
 import GeneratePaySlip from "./pages/Payroll Processing/GeneratePaySlip";
 import EmployeeSalaryDetails from "./pages/Payroll Processing/EmployeeSalaryDetails";
 import EPFTransfer from "./pages/Payroll Processing/EPFTransfer";
+import EPFReport from "./pages/Payroll Processing/EPFReport";
+import ETFFormII from "./pages/Payroll Processing/ETFFormII";
 import ProcessEPFTransfer from "./pages/Payroll Processing/ProcessEPFTransfer";
 import LoadEPFEmployeeData from "./pages/Payroll Processing/LoadEPFEmployeeData";
 import ReviewEPFTransfer from "./pages/Payroll Processing/ReviewEPFTransfer";
 import FinalizeEPF from "./pages/Payroll Processing/FinalizeEPF";
 import ConfirmEPFTransfer from "./pages/Payroll Processing/ConfirmEPFTransfer";
 import ETFTransfer from "./pages/Payroll Processing/ETFTransfer";
+import SendSalaryToBank from "./pages/Payroll Processing/SendSalaryToBank";
 
 // Reports and Analytics
 import EmployeeSummaryPage from "./pages/Reports/EmployeeSummaryPage/EmployeeSummaryPage";
@@ -157,12 +160,15 @@ function App() {
           <Route path="/generate-pay-slip" element={<GeneratePaySlip />} />
           <Route path="/employee-salary-details" element={<EmployeeSalaryDetails />} />
           <Route path="/epf-transfer" element={<EPFTransfer />} />
+          <Route path="/epf-report" element={<EPFReport />} />
+          <Route path="/etf-form-ii" element={<ETFFormII />} />
           <Route path="/process-epf-transfer" element={<ProcessEPFTransfer />} />
           <Route path="/process-epf-transfer/load-data" element={<LoadEPFEmployeeData />} />
           <Route path="/process-epf-transfer/review" element={<ReviewEPFTransfer />} />
           <Route path="/process-epf-transfer/confirm" element={<FinalizeEPF />} />
           <Route path="/process-epf/confirm-transfer" element={<ConfirmEPFTransfer />} />
           <Route path="/etf-transfer" element={<ETFTransfer />} />
+          <Route path="/payroll/send-salary-to-bank" element={<SendSalaryToBank />} />
 
           {/* Reports and Analysis */}
           <Route path="/report-analytics" element={<EmployeeSummaryPage />} /> {/* Main Reports Landing */}
