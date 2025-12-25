@@ -1,4 +1,4 @@
-// src/pages/Payroll Processing/EPFReport.jsx
+// src/pages/Payroll Processing/ETFReport.jsx
 import React, { useState, useEffect, useMemo } from "react";
 import Layout from "../../components/Layout";
 import PageHeader from "../../components/PageHeader";
@@ -6,7 +6,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { apiGet, apiGetWithParams } from "../../services/api";
 import { formatCurrency } from "../../utils/helpers";
 
-export default function EPFReport() {
+export default function ETFReport() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -95,8 +95,8 @@ export default function EPFReport() {
     return months;
   };
 
-  // ================= FETCH EPF REPORT DATA =================
-  const fetchEPFReport = async () => {
+  // ================= FETCH ETF REPORT DATA =================
+  const fetchETFReport = async () => {
     setLoading(true);
     try {
       const [year, month] = filters.month.split('-').map(Number);
@@ -114,28 +114,24 @@ export default function EPFReport() {
       let data = [];
       let totals = { 
         totalBasic: 0, 
-        totalEmployeeEPF: 0, 
-        totalEmployerEPF: 0, 
-        totalEPF: 0 
+        totalETF: 0 
       };
       
       try {
         const paymentRes = await apiGetWithParams('/salary/etf-epf/payment-history', { year, month });
         if (paymentRes.ok && paymentRes.data) {
-          // Transform payment history data
+          // Transform payment history data - ETF only
           const historyData = Array.isArray(paymentRes.data) ? paymentRes.data : [];
           data = historyData.map(item => ({
             id: item.id || item.employee_id,
             employee_id: item.employee_id,
+            etf_number: item.etf_number || 'N/A',
             epf_number: item.epf_number || 'N/A',
             full_name: item.full_name,
             employee_code: item.employee_code,
             department_name: item.department_name || 'N/A',
             basic_salary: Number(item.basic_salary || item.gross_salary || 0),
-            employee_epf: Number(item.employee_epf_contribution || 0),
-            employer_epf: Number(item.employer_epf_contribution || 0),
-            total_epf: Number(item.employee_epf_contribution || 0) + 
-                      Number(item.employer_epf_contribution || 0),
+            etf_amount: Number(item.employer_etf_contribution || 0),
             process_date: item.process_date,
             status: item.status || 'Processed'
           }));
@@ -143,9 +139,7 @@ export default function EPFReport() {
           // Calculate totals
           totals = data.reduce((acc, item) => ({
             totalBasic: acc.totalBasic + item.basic_salary,
-            totalEmployeeEPF: acc.totalEmployeeEPF + item.employee_epf,
-            totalEmployerEPF: acc.totalEmployerEPF + item.employer_epf,
-            totalEPF: acc.totalEPF + item.total_epf
+            totalETF: acc.totalETF + item.etf_amount
           }), totals);
         }
       } catch (historyError) {
@@ -159,15 +153,13 @@ export default function EPFReport() {
             data = processData.map(item => ({
               id: item.employee_id,
               employee_id: item.employee_id,
+              etf_number: item.etf_number || 'N/A',
               epf_number: item.epf_number || 'N/A',
               full_name: item.full_name,
               employee_code: item.employee_code,
               department_name: item.department_name || 'N/A',
               basic_salary: Number(item.basic_salary || 0),
-              employee_epf: Number(item.epf_employee_amount || 0),
-              employer_epf: Number(item.epf_employer_share || 0),
-              total_epf: Number(item.epf_employee_amount || 0) + 
-                        Number(item.epf_employer_share || 0),
+              etf_amount: Number(item.etf_employer_contribution || 0),
               process_date: item.processed_at || new Date().toISOString().slice(0, 10),
               status: 'Calculated'
             }));
@@ -175,15 +167,13 @@ export default function EPFReport() {
             // Calculate totals
             totals = data.reduce((acc, item) => ({
               totalBasic: acc.totalBasic + item.basic_salary,
-              totalEmployeeEPF: acc.totalEmployeeEPF + item.employee_epf,
-              totalEmployerEPF: acc.totalEmployerEPF + item.employer_epf,
-              totalEPF: acc.totalEPF + item.total_epf
+              totalETF: acc.totalETF + item.etf_amount
             }), totals);
           }
         } catch (processError) {
           console.log('Process list endpoint not available, using fallback calculation');
           
-          // Final fallback: Get employee list and calculate EPF only
+          // Final fallback: Get employee list and calculate ETF only
           try {
             const employeesRes = await apiGet('/salary/employees');
             const employeesData = Array.isArray(employeesRes?.data) ? employeesRes.data : [];
@@ -207,20 +197,18 @@ export default function EPFReport() {
             
             data = filteredEmployees.map(emp => {
               const basic = Number(emp.basic_salary || emp.salary || 0);
-              const employeeEPF = (basic * 8) / 100;
-              const employerEPF = (basic * 12) / 100;
+              const etfAmount = (basic * 3) / 100;
               
               return {
                 id: emp.employee_id || emp.id,
                 employee_id: emp.employee_id || emp.id,
+                etf_number: emp.etf_no || emp.etf_number || 'N/A',
                 epf_number: emp.epf_no || emp.epf_number || 'N/A',
                 full_name: emp.full_name,
                 employee_code: emp.employee_code || `EMP${emp.employee_id || emp.id}`,
                 department_name: emp.department || emp.department_name || 'N/A',
                 basic_salary: basic,
-                employee_epf: employeeEPF,
-                employer_epf: employerEPF,
-                total_epf: employeeEPF + employerEPF,
+                etf_amount: etfAmount,
                 process_date: new Date().toISOString().slice(0, 10),
                 status: 'Estimated'
               };
@@ -229,12 +217,10 @@ export default function EPFReport() {
             // Calculate totals
             totals = data.reduce((acc, item) => ({
               totalBasic: acc.totalBasic + item.basic_salary,
-              totalEmployeeEPF: acc.totalEmployeeEPF + item.employee_epf,
-              totalEmployerEPF: acc.totalEmployerEPF + item.employer_epf,
-              totalEPF: acc.totalEPF + item.total_epf
+              totalETF: acc.totalETF + item.etf_amount
             }), totals);
           } catch (finalError) {
-            console.error('All EPF data sources failed:', finalError);
+            console.error('All ETF data sources failed:', finalError);
             data = [];
           }
         }
@@ -246,6 +232,7 @@ export default function EPFReport() {
         data = data.filter(item => 
           item.full_name?.toLowerCase().includes(searchLower) ||
           item.employee_code?.toLowerCase().includes(searchLower) ||
+          item.etf_number?.toLowerCase().includes(searchLower) ||
           item.epf_number?.toLowerCase().includes(searchLower) ||
           item.department_name?.toLowerCase().includes(searchLower)
         );
@@ -260,14 +247,10 @@ export default function EPFReport() {
       if (data.length > 0) {
         totals = data.reduce((acc, item) => ({
           totalBasic: acc.totalBasic + item.basic_salary,
-          totalEmployeeEPF: acc.totalEmployeeEPF + item.employee_epf,
-          totalEmployerEPF: acc.totalEmployerEPF + item.employer_epf,
-          totalEPF: acc.totalEPF + item.total_epf
+          totalETF: acc.totalETF + item.etf_amount
         }), { 
           totalBasic: 0, 
-          totalEmployeeEPF: 0, 
-          totalEmployerEPF: 0, 
-          totalEPF: 0 
+          totalETF: 0
         });
       }
       
@@ -280,15 +263,13 @@ export default function EPFReport() {
       });
       
     } catch (error) {
-      console.error('Failed to fetch EPF report:', error);
-      alert('Failed to load EPF report data. Please try again.');
+      console.error('Failed to fetch ETF report:', error);
+      alert('Failed to load ETF report data. Please try again.');
       setReportData({
         data: [],
         totals: { 
           totalBasic: 0, 
-          totalEmployeeEPF: 0, 
-          totalEmployerEPF: 0, 
-          totalEPF: 0 
+          totalETF: 0 
         },
         period: filters.month,
         generatedDate: new Date().toLocaleString(),
@@ -301,7 +282,7 @@ export default function EPFReport() {
 
   // ================= INITIAL FETCH =================
   useEffect(() => {
-    fetchEPFReport();
+    fetchETFReport();
   }, []);
 
   // ================= EXPORT FUNCTIONS =================
@@ -311,27 +292,24 @@ export default function EPFReport() {
       return;
     }
 
-    const headers = ['EPF Number', 'Employee Code', 'Employee Name', 'Department', 'Basic Salary', 'EPF (Employee 8%)', 'EPF (Employer 12%)', 'Total EPF', 'Status'];
+    const headers = ['ETF Number', 'EPF Number', 'Employee Code', 'Employee Name', 'Department', 'Basic Salary', 'ETF Amount (3%)', 'Status'];
     
     const csvRows = reportData.data.map(item => [
+      item.etf_number,
       item.epf_number,
       item.employee_code,
       `"${item.full_name}"`,
       `"${item.department_name}"`,
       item.basic_salary.toFixed(2),
-      item.employee_epf.toFixed(2),
-      item.employer_epf.toFixed(2),
-      item.total_epf.toFixed(2),
+      item.etf_amount.toFixed(2),
       item.status
     ]);
 
     // Add totals row
     csvRows.push([
-      '', '', '', 'TOTALS:',
+      '', '', '', 'TOTALS:', '',
       reportData.totals.totalBasic.toFixed(2),
-      reportData.totals.totalEmployeeEPF.toFixed(2),
-      reportData.totals.totalEmployerEPF.toFixed(2),
-      reportData.totals.totalEPF.toFixed(2),
+      reportData.totals.totalETF.toFixed(2),
       ''
     ]);
 
@@ -344,7 +322,7 @@ export default function EPFReport() {
     const a = document.createElement('a');
     const [year, month] = filters.month.split('-');
     a.href = url;
-    a.download = `EPF_Report_${year}_${month}.csv`;
+    a.download = `ETF_Report_${year}_${month}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -357,7 +335,7 @@ export default function EPFReport() {
       // Generate PDF using the backend PDF generation endpoint
       // This would require a PDF generation endpoint in your backend
       window.open(
-        `${process.env.VITE_API_URL || 'http://localhost:4000'}/api/payroll/export-epf-pdf?month=${month}&year=${year}`,
+        `${process.env.VITE_API_URL || 'http://localhost:4000'}/api/payroll/export-etf-pdf?month=${month}&year=${year}`,
         '_blank'
       );
     } catch (error) {
@@ -368,7 +346,7 @@ export default function EPFReport() {
     }
   };
 
-  const handleProcessEPF = () => {
+  const handleProcessETF = () => {
     const [year, month] = filters.month.split('-');
     const employeeIds = reportData.data.map(item => item.employee_id);
     
@@ -377,9 +355,9 @@ export default function EPFReport() {
       return;
     }
     
-    if (window.confirm(`Process EPF contributions for ${employeeIds.length} employees for ${month}/${year}?`)) {
-      // Navigate to EPF processing page
-      navigate("/process-epf", {
+    if (window.confirm(`Process ETF contributions for ${employeeIds.length} employees for ${month}/${year}?`)) {
+      // Navigate to ETF processing page
+      navigate("/process-etf", {
         state: {
           month,
           year,
@@ -410,6 +388,7 @@ export default function EPFReport() {
       data = data.filter(item => 
         item.full_name?.toLowerCase().includes(searchLower) ||
         item.employee_code?.toLowerCase().includes(searchLower) ||
+        item.etf_number?.toLowerCase().includes(searchLower) ||
         item.epf_number?.toLowerCase().includes(searchLower)
       );
     }
@@ -426,8 +405,8 @@ export default function EPFReport() {
   return (
     <Layout>
       <PageHeader 
-        breadcrumb={["Payroll Processing", "EPF Transfer", "EPF Report"]} 
-        title="EPF Contribution Report" 
+        breadcrumb={["Payroll Processing", "ETF Transfer", "ETF Report"]} 
+        title="ETF Contribution Report" 
       />
 
       {/* ================= TABS ================= */}
@@ -452,8 +431,8 @@ export default function EPFReport() {
           flexWrap: "wrap",
           gap: "12px" 
         }}>
-          <button className="btn btn-soft" onClick={() => navigate("/epf-transfer")}>
-            ← Back to EPF Transfer
+          <button className="btn btn-soft" onClick={() => navigate("/etf-transfer")}>
+            ← Back to ETF Transfer
           </button>
           
           <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
@@ -473,10 +452,10 @@ export default function EPFReport() {
             </button>
             <button 
               className="btn btn-primary" 
-              onClick={handleProcessEPF}
+              onClick={handleProcessETF}
               disabled={loading || !reportData.data || reportData.data.length === 0}
             >
-              💰 Process EPF Payment
+              💰 Process ETF Payment
             </button>
           </div>
         </div>
@@ -535,7 +514,7 @@ export default function EPFReport() {
             <input
               type="text"
               className="input"
-              placeholder="Search by name, code, or EPF number"
+              placeholder="Search by name, code, ETF or EPF number"
               value={filters.search}
               onChange={(e) => setFilters({...filters, search: e.target.value})}
               style={{ width: "100%" }}
@@ -575,7 +554,7 @@ export default function EPFReport() {
           </button>
           <button 
             className="btn btn-primary" 
-            onClick={fetchEPFReport}
+            onClick={fetchETFReport}
             disabled={loading}
           >
             {loading ? 'Loading...' : '🔍 Generate Report'}
@@ -585,7 +564,7 @@ export default function EPFReport() {
 
       {/* ================= SUMMARY CARDS ================= */}
       {reportData.totals && (
-        <div className="grid-4" style={{ marginBottom: "24px", gap: "12px" }}>
+        <div className="grid-3" style={{ marginBottom: "24px", gap: "12px" }}>
           <div className="card" style={{ padding: "16px", borderLeft: "4px solid #3b82f6" }}>
             <div style={{ fontSize: "12px", color: "var(--muted)" }}>Total Employees</div>
             <div style={{ fontSize: "20px", fontWeight: "700" }}>
@@ -598,16 +577,10 @@ export default function EPFReport() {
               {formatCurrency(reportData.totals.totalBasic || 0)}
             </div>
           </div>
-          <div className="card" style={{ padding: "16px", borderLeft: "4px solid #ef4444" }}>
-            <div style={{ fontSize: "12px", color: "var(--muted)" }}>Employee EPF (8%)</div>
+          <div className="card" style={{ padding: "16px", borderLeft: "4px solid #8b5cf6" }}>
+            <div style={{ fontSize: "12px", color: "var(--muted)" }}>Total ETF (3%)</div>
             <div style={{ fontSize: "20px", fontWeight: "700" }}>
-              {formatCurrency(reportData.totals.totalEmployeeEPF || 0)}
-            </div>
-          </div>
-          <div className="card" style={{ padding: "16px", borderLeft: "4px solid #f59e0b" }}>
-            <div style={{ fontSize: "12px", color: "var(--muted)" }}>Total EPF Contributions</div>
-            <div style={{ fontSize: "20px", fontWeight: "700" }}>
-              {formatCurrency(reportData.totals.totalEPF || 0)}
+              {formatCurrency(reportData.totals.totalETF || 0)}
             </div>
           </div>
         </div>
@@ -624,7 +597,7 @@ export default function EPFReport() {
         }}>
           <div>
             <h3 style={{ fontSize: "16px", fontWeight: "600", margin: 0 }}>
-              EPF Contribution Report: {filters.month}
+              ETF Contribution Report: {filters.month}
             </h3>
             <div style={{ fontSize: "12px", color: "var(--muted)", marginTop: "4px" }}>
               Generated on {reportData.generatedDate || new Date().toLocaleString()} • {filteredData.length} records
@@ -643,7 +616,7 @@ export default function EPFReport() {
               {filteredData.length === 0 ? 'No Data' : 'Data Verified'}
             </span>
             <div style={{ fontSize: "12px", color: "var(--muted)" }}>
-              Employer EPF (12%): {formatCurrency(reportData.totals?.totalEmployerEPF || 0)}
+              ETF Rate: 3% of Basic Salary
             </div>
           </div>
         </div>
@@ -651,30 +624,29 @@ export default function EPFReport() {
         {loading ? (
           <div style={{ padding: "60px", textAlign: "center", color: "var(--muted)" }}>
             <div className="spinner" style={{ marginBottom: "10px" }}></div>
-            Loading EPF contribution report...
+            Loading ETF contribution report...
           </div>
         ) : filteredData.length === 0 ? (
           <div style={{ padding: "60px", textAlign: "center", color: "var(--muted)" }}>
-            No EPF data found for the selected filters.
+            No ETF data found for the selected filters.
             <div style={{ marginTop: "12px" }}>
-              <button className="btn btn-soft" onClick={fetchEPFReport}>
+              <button className="btn btn-soft" onClick={fetchETFReport}>
                 Retry Loading Data
               </button>
             </div>
-        </div>
+          </div>
         ) : (
           <>
-            <table className="table" style={{ minWidth: "1100px" }}>
+            <table className="table" style={{ minWidth: "1000px" }}>
               <thead>
                 <tr>
+                  <th>ETF No.</th>
                   <th>EPF No.</th>
                   <th>Employee Code</th>
                   <th>Employee Name</th>
                   <th>Department</th>
                   <th style={{ textAlign: "right" }}>Basic Salary</th>
-                  <th style={{ textAlign: "right", color: "#ef4444" }}>Employee (8%)</th>
-                  <th style={{ textAlign: "right", color: "#f59e0b" }}>Employer (12%)</th>
-                  <th style={{ textAlign: "right", fontWeight: "700" }}>Total EPF</th>
+                  <th style={{ textAlign: "right", color: "#8b5cf6" }}>ETF Amount (3%)</th>
                   <th>Status</th>
                 </tr>
               </thead>
@@ -683,6 +655,11 @@ export default function EPFReport() {
                   <tr key={item.id}>
                     <td>
                       <span style={{ fontWeight: "500", fontFamily: "monospace" }}>
+                        {item.etf_number}
+                      </span>
+                    </td>
+                    <td>
+                      <span style={{ fontFamily: "monospace" }}>
                         {item.epf_number}
                       </span>
                     </td>
@@ -692,14 +669,8 @@ export default function EPFReport() {
                     <td style={{ textAlign: "right", fontFamily: "monospace" }}>
                       {formatCurrency(item.basic_salary)}
                     </td>
-                    <td style={{ textAlign: "right", fontFamily: "monospace", color: "#ef4444" }}>
-                      {formatCurrency(item.employee_epf)}
-                    </td>
-                    <td style={{ textAlign: "right", fontFamily: "monospace", color: "#f59e0b" }}>
-                      {formatCurrency(item.employer_epf)}
-                    </td>
-                    <td style={{ textAlign: "right", fontFamily: "monospace", fontWeight: "700" }}>
-                      {formatCurrency(item.total_epf)}
+                    <td style={{ textAlign: "right", fontFamily: "monospace", color: "#8b5cf6", fontWeight: "700" }}>
+                      {formatCurrency(item.etf_amount)}
                     </td>
                     <td>
                       <span style={{
@@ -722,20 +693,14 @@ export default function EPFReport() {
               </tbody>
               <tfoot>
                 <tr style={{ background: "var(--bg-light)", fontWeight: "700", borderTop: "2px solid var(--border)" }}>
-                  <td colSpan="4" style={{ padding: "16px" }}>
+                  <td colSpan="5" style={{ padding: "16px" }}>
                     GRAND TOTALS ({filteredData.length} employees)
                   </td>
                   <td style={{ textAlign: "right", padding: "16px" }}>
                     {formatCurrency(reportData.totals.totalBasic)}
                   </td>
-                  <td style={{ textAlign: "right", padding: "16px", color: "#ef4444" }}>
-                    {formatCurrency(reportData.totals.totalEmployeeEPF)}
-                  </td>
-                  <td style={{ textAlign: "right", padding: "16px", color: "#f59e0b" }}>
-                    {formatCurrency(reportData.totals.totalEmployerEPF)}
-                  </td>
-                  <td style={{ textAlign: "right", padding: "16px", fontSize: "1.1em" }}>
-                    {formatCurrency(reportData.totals.totalEPF)}
+                  <td style={{ textAlign: "right", padding: "16px", fontSize: "1.1em", color: "#8b5cf6" }}>
+                    {formatCurrency(reportData.totals.totalETF)}
                   </td>
                   <td style={{ padding: "16px" }}>
                     {/* Empty cell for status column */}
@@ -756,15 +721,16 @@ export default function EPFReport() {
         borderLeft: "4px solid #0d6efd" 
       }}>
         <p style={{ margin: "0 0 8px 0", fontSize: "14px", color: "#444", fontWeight: "600" }}>
-          📋 EPF Contribution Information:
+          📋 ETF Contribution Information:
         </p>
         <ul style={{ margin: "0", paddingLeft: "20px", fontSize: "13px", color: "#666" }}>
-          <li>Employee EPF contribution is 8% of basic salary (deducted from salary)</li>
-          <li>Employer EPF contribution is 12% of basic salary (paid by company)</li>
-          <li>Total EPF contribution per employee = Employee (8%) + Employer (12%) = 20% of basic salary</li>
-          <li>EPF numbers must be verified before submission to the EPF department</li>
-          <li>Monthly EPF returns must be filed by the 15th of the following month</li>
-          <li>Maintain EPF records for minimum of 10 years for compliance purposes</li>
+          <li>ETF (Employees' Trust Fund) is 3% of basic salary contributed by employer</li>
+          <li>ETF is separate from EPF and paid entirely by the employer</li>
+          <li>All employees earning above the minimum wage threshold are eligible for ETF</li>
+          <li>ETF contributions must be submitted to the ETF department monthly</li>
+          <li>Form II must be filed with ETF department by the 15th of following month</li>
+          <li>ETF contributions are not withdrawable by employees during employment</li>
+          <li>Maintain ETF records for minimum of 10 years for compliance purposes</li>
         </ul>
       </div>
     </Layout>

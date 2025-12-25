@@ -52,6 +52,7 @@ import ReviewSalary from "./pages/Payroll Processing/ReviewSalary";
 import FinalizePayroll from "./pages/Payroll Processing/FinalizePayroll";
 import ConfirmProcessing from "./pages/Payroll Processing/ConfirmProcessing";
 import GeneratePaySlip from "./pages/Payroll Processing/GeneratePaySlip";
+
 import EmployeeSalaryDetails from "./pages/Payroll Processing/EmployeeSalaryDetails";
 import EPFTransfer from "./pages/Payroll Processing/EPFTransfer";
 import EPFReport from "./pages/Payroll Processing/EPFReport";
@@ -168,6 +169,7 @@ function App() {
           <Route path="/process-epf-transfer/confirm" element={<FinalizeEPF />} />
           <Route path="/process-epf/confirm-transfer" element={<ConfirmEPFTransfer />} />
           <Route path="/etf-transfer" element={<ETFTransfer />} />
+          
           <Route path="/payroll/send-salary-to-bank" element={<SendSalaryToBank />} />
 
           {/* Reports and Analysis */}
