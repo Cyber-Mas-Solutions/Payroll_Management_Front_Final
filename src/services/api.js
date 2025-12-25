@@ -274,15 +274,6 @@ export const etfEpfApi = {
     
   getEmployeePaymentHistory: (employeeId) => 
     apiGet(`/salary/etf-epf/${employeeId}/history`),
-
-  exportETFCSV: (params) => 
-    apiGetWithParams('/payroll/export-etf-csv', params),
-
-   getEtfEpfProcessList: ({ year, month }) => 
-    apiGetWithParams('/salary/etf-epf-process', { year, month }),
-    
-  getETFReport: ({ year, month }) =>
-    apiGetWithParams('/salary/etf-report', { year, month }),
   
 };
 

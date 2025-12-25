@@ -164,29 +164,70 @@ export default function EPFTransfer() {
 
           <div className="grid-3">
             <button
-                className="btn btn-primary"
-                onClick={() => navigate("/process-epf-transfer")}
-              >
-                Process EPF Transfer
-              </button>
+  className="btn btn-primary"
+  onClick={() => navigate("/process-epf-transfer")}
+>
+  Process EPF Transfer
+</button>
 
 
-
-
-              {/* To this: */}
-              <button 
-                className="btn btn-soft" 
-                onClick={() => navigate("/epf-report")}
-              >
-                Generate EPF Report
-              </button>
+            <button className="btn btn-soft">Generate EPF Report</button>
 
             <button className="btn btn-soft">Send to EPF Department</button>
           </div>
         </div>
       </div>
 
-     
+      {/* ================= TABLE ================= */}
+      <div className="card">
+        {loading ? (
+          <div style={{ padding: 40, textAlign: "center" }}>Loading...</div>
+        ) : (
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Employee</th>
+                <th>EPF No</th>
+                <th>Month</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Action</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              {transfers.map((t) => (
+                <tr key={t.id}>
+                  <td>{t.employee_name}</td>
+                  <td>{t.epf_number}</td>
+                  <td>{t.month}</td>
+                  <td>Rs. {t.total.toLocaleString()}</td>
+                  <td>
+                    <span
+                      className={`pill ${
+                        t.status === "Completed" ? "pill-ok" : "pill-warn"
+                      }`}
+                    >
+                      {t.status}
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-soft"
+                      onClick={() => {
+                        setSelectedTransfer(t);
+                        setShowDetailsModal(true);
+                      }}
+                    >
+                      View
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
 
       {/* ================= MODALS ================= */}
       {showProcessModal && (

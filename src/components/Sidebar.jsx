@@ -89,13 +89,11 @@ const Sidebar = () => {
     '/employee-salary-details',
     '/process-payroll/load-data',
     '/epf-transfer',
-    '/epf-report',
     '/process-epf-transfer',
     '/process-epf-transfer/review',
     '/process-epf-transfer/confirm',
     '/process-epf/confirm-transfer',
     '/etf-transfer',
-    
 
   ];
 
